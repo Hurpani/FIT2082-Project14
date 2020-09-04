@@ -5,6 +5,7 @@ from architecture.object import Object
 #from architecture.world import World
 
 
+# TODO: FIX the circular import here.
 class Location(ABC):
     """\
 The Location class. Manages a location in a map.
