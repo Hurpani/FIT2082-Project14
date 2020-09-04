@@ -3,10 +3,10 @@ import matplotlib as mpl
 from matplotlib import pyplot as plt
 from matplotlib import colors
 
-def make_and_show_box():
 
-    #average non queen is 16mm long with a range of 9.7mm to 26.3mm
-    #given a 16mm^2 grid the boxes are 160mm * 256mm
+def make_and_show_box():
+    # average non queen is 16mm long with a range of 9.7mm to 26.3mm
+    # given a 16mm^2 grid the boxes are 160mm * 256mm
 
     box_nest = [
         [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
@@ -59,18 +59,18 @@ def make_and_show_box():
     stiched_map = []
 
     for i in range(len(box_nest)):
-        stiched_map.append(box_foraging_arena[i]+box_nest[i])
+        stiched_map.append(box_foraging_arena[i] + box_nest[i])
     for i in range(len(box_tunnel)):
         stiched_map.append(box_tunnel[i])
 
-
-    cmap = mpl.colors.ListedColormap(['White','Black'])
-    plt.figure(figsize=(len(stiched_map[0]),len(stiched_map)))
-    plt.pcolor(stiched_map[::-1],cmap=cmap,edgecolors='k', linewidths=1)
+    cmap = mpl.colors.ListedColormap(['White', 'Black'])
+    plt.figure(figsize=(len(stiched_map[0]), len(stiched_map)))
+    plt.pcolor(stiched_map[::-1], cmap=cmap, edgecolors='k', linewidths=1)
+    for l in stiched_map:
+        print(l)
     plt.show()
 
 
 if __name__ == "__main__":
     print("Hello, World!")
     make_and_show_box()
-
