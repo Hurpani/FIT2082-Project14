@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
-
 from architecture.kinds import Kind
+from architecture.position import Position
 from architecture.world import World
 
 
@@ -8,8 +8,13 @@ class Actor(ABC):
     """\
 An moving, reacting object participating in the simulation.
     """
-    @abstractmethod
-    def get_id(self) -> str:
+
+    @staticmethod
+    def create(pos: Position = Position()):
+        pass
+
+    @staticmethod
+    def get_id() -> str:
         pass
 
     @abstractmethod
@@ -18,6 +23,3 @@ An moving, reacting object participating in the simulation.
 
     def get_kinds(self) -> [Kind]:
         return []
-
-    def __init__(self):
-        pass

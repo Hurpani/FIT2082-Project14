@@ -2,6 +2,10 @@ import networkx as nx
 import matplotlib as mpl
 from matplotlib import pyplot as plt
 from matplotlib import colors
+from ant_simulation.ant import Ant
+from architecture.actor import Actor
+from architecture.generation import factory
+from architecture.position import Position
 
 
 def make_and_show_box():
@@ -72,5 +76,10 @@ def make_and_show_box():
 
 
 if __name__ == "__main__":
-    print("Hello, World!")
-    make_and_show_box()
+    factory.register_actor(Ant.get_id(), Ant.create)
+    print()
+    actor: Actor = factory.make_actor("ant")
+    print("Here's a factory-generated ant:")
+    print(actor.get_id())
+    print()
+    #make_and_show_box()
