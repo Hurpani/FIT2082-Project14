@@ -10,7 +10,7 @@ An moving, reacting object participating in the simulation.
     """
 
     @staticmethod
-    def create(pos: Position = Position()):
+    def create(pos: Position = Position(), kinds: [Kind] = []):
         pass
 
     @staticmethod

@@ -9,7 +9,7 @@ A piece of ground participating in the simulation.
     """
 
     @staticmethod
-    def create(pos: Position = Position()):
+    def create(pos: Position = Position(), kinds: [Kind] = []):
         pass
 
     @abstractmethod

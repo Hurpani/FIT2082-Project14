@@ -5,6 +5,7 @@ from matplotlib import colors
 from ant_simulation.ant import Ant
 from architecture.actor import Actor
 from architecture.generation import factory
+from architecture.kinds import Kind
 from architecture.position import Position
 
 
@@ -78,8 +79,11 @@ def make_and_show_box():
 if __name__ == "__main__":
     factory.register_actor(Ant.get_id(), Ant.create)
     print()
-    actor: Actor = factory.make_actor("ant")
+    # Access the private dictionary for the Kind enum to get the kind by its string name.
+    actor: Actor = factory.make_actor("ant", Position(), Kind["DEFAULT"])
     print("Here's a factory-generated ant:")
     print(actor.get_id())
+    print("Here are the Kinds attached to this ant:")
+    print(actor.get_kinds())
     print()
     #make_and_show_box()

@@ -19,3 +19,7 @@ The Map class. Manages a piece of terrain for the simulation.
     def get_scale(self) -> float:
         return self.scale
 
+    def get_printable(self) -> [[int]]:
+
+        return []
+
