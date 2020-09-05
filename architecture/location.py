@@ -1,27 +1,28 @@
 from abc import ABC
-#from architecture.actor import Actor
-from architecture.ground import Ground
-from architecture.object import Object
-#from architecture.world import World
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from architecture.actor import Actor
+    from architecture.ground import Ground
+    from architecture.object import Object
+    from architecture.world import World
 
 
-# TODO: FIX the circular import here.
 class Location(ABC):
     """\
 The Location class. Manages a location in a map.
     """
 
     def __init__(self):#, world: World):
-        #self.world: World = world       # 1..1
+        self.world: World = None       # 1..1
         self.ground: Ground = None      # 1..1
-        #self.actor: Actor = None        # 0..1
+        self.actor: Actor = None        # 0..1
         self.objects: [Object] = []     # 0..*
 
-    #def get_actor(self) -> Actor:
+    def get_actor(self) -> Actor:
         """\
     Returns the actor at this location.
         """
-        #return self.actor
+        return self.actor
 
     def get_ground(self) -> Ground:
         """\

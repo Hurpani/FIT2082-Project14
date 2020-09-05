@@ -1,5 +1,4 @@
 from abc import ABC, abstractmethod
-
 from architecture.kinds import Kind
 from architecture.position import Position
 

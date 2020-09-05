@@ -1,4 +1,6 @@
-from architecture.location import Location
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from architecture.location import Location
 
 
 class World:
