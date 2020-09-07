@@ -73,7 +73,7 @@ def make_and_show_box():
     for i in range(len(box_tunnel)):
         stiched_map.append(box_tunnel[i])
 
-    cmap = mpl.colors.ListedColormap(['White', 'Black'])
+    cmap = mpl.colors.ListedColormap([(1,1,0,1), 'Black'])
     plt.figure(figsize=(len(stiched_map[0]), len(stiched_map)))
     plt.pcolor(stiched_map[::-1], cmap=cmap, edgecolors='k', linewidths=1)
     for l in stiched_map:

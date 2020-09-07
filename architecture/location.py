@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from abc import ABC
 from architecture.exceptions.invalid_location import InvalidLocationException
+from architecture.rendering.colour import Colour
 
 if TYPE_CHECKING:
     from architecture.actor import Actor
@@ -19,6 +20,8 @@ class Location(ABC):
 The Location class. Manages a location in a map.
     """
 
+    DEFAULT_OBJECTS_COLOUR: Colour = Colour(0, 0, 0)
+
     def __init__(self, ground: Ground):
         self.ground: Ground = ground     # 1..1
         self.actor: Actor = None         # 0..1
@@ -29,6 +32,19 @@ The Location class. Manages a location in a map.
         self.actor.tick(world, elapsed, self)
         for obj in self.objects:
             obj.tick(world, elapsed, self)
+
+
+    def get_objects_colour(self) -> Colour:
+        return Location.DEFAULT_OBJECTS_COLOUR
+
+
+    def get_colour(self) -> Colour:
+        if self.actor is not None:
+            return self.actor.get_colour()
+        elif len(self.objects) > 0:
+            return self.get_objects_colour()
+        else:
+            return self.ground.get_colour()
 
 
     def set_actor(self, actor: Actor):

@@ -2,6 +2,7 @@ from architecture.actor import Actor
 from architecture.kinds import Kind
 from architecture.location import Location
 from architecture.position import Position
+from architecture.rendering.colour import Colour
 from architecture.world import World
 
 
@@ -14,18 +15,27 @@ A temporary test class.
     def create(pos: Position = Position(), kinds: [Kind] = []) -> Actor:
         return Ant(pos, kinds)
 
+
     @staticmethod
     def get_id() -> str:
         return "ant"
 
+
     def get_kinds(self) -> [Kind]:
         return self.kinds
+
 
     def tick(self, world: World, elapsed: float, location: Location):
         pass
 
+
     def add_kind(self, kind: Kind):
         self.kinds.append(kind)
+
+
+    def get_colour(self) -> Colour:
+        return Colour()
+
 
     def __init__(self, pos: Position, kinds: [Kind]):
         self.kinds = kinds
