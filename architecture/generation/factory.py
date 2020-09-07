@@ -1,6 +1,7 @@
 from typing import Callable, Dict, List
 from architecture.actor import Actor
 from architecture.ground import Ground
+from architecture.object import Object
 from architecture.position import Position
 from architecture.exceptions.invalid_id import InvalidIdException
 from architecture.kinds import Kind
@@ -12,6 +13,7 @@ registration.
 
 _actor_constructors: Dict[str, Callable[[Position, List[Kind]], Actor]] = {}
 _ground_constructors: Dict[str, Callable[[Position, List[Kind]], Ground]] = {}
+_object_constructors: Dict[str, Callable[[Position, List[Kind]], Object]] = {}
 _ground_colour_indices: Dict[str, int] = {}
 
 
@@ -30,6 +32,10 @@ Registers a Ground's constructor against an id for generation.
     _ground_colour_indices[id] = colour_index
 
 
+def register_object(id: str, constructor: Callable[[Position, List[Kind]], Ground]):
+    _register(id, constructor, _object_constructors)
+
+
 def make_actor(id: str, *args) -> Actor:
     """\
 Creates a new instance of the Actor class based on the provided string
@@ -44,6 +50,14 @@ Creates a new instance of the Ground class based on the provided string
     identifier.
     """
     return _make(id, _ground_constructors, *args)
+
+
+def make_object(id: str, *args) -> Object:
+    """\
+Creates a new instance of the Object class based on the provided string
+    identifier.
+    """
+    return _make(id, _actor_constructors, *args)
 
 
 def get_ground_colour_index(id: str) -> int:

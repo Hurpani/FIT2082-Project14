@@ -1,3 +1,8 @@
+##############################
+from __future__ import annotations
+from typing import TYPE_CHECKING
+##############################
+
 import networkx as nx
 import matplotlib as mpl
 from matplotlib import pyplot as plt
@@ -77,6 +82,13 @@ def make_and_show_box():
 
 
 if __name__ == "__main__":
+    # TODO :
+    #   -> Create a file-reader which accepts a file such as is output by txt_creator.py and
+    #      uses the factory to generate the relevant Objects, Actors and Grounds.
+    #       => Actors and Objects will need to be listed, rather than provided in a grid, since
+    #          they have a series of Kinds, and also are not present necessarily in every Location.
+    #   -> Populate a World with these.
+
     factory.register_actor(Ant.get_id(), Ant.create)
     print()
     # Access the private dictionary for the Kind enum to get the kind by its string name.

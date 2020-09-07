@@ -12,7 +12,7 @@ A piece of ground participating in the simulation.
     def create(pos: Position = Position(), kinds: [Kind] = []):
         pass
 
-    @abstractmethod
+    @staticmethod
     def get_id(self) -> str:
         pass
 
@@ -20,8 +20,9 @@ A piece of ground participating in the simulation.
     def is_passable(self) -> bool:
         pass
 
+    @abstractmethod
+    def add_kind(self, kind: Kind):
+        pass
+
     def get_kinds(self) -> [Kind]:
         return []
-
-    def __init__(self):
-        pass
