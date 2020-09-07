@@ -44,6 +44,7 @@ The Map class. Manages a piece of terrain for the simulation.
 
 
     def run(self):
+        self.running = True
         while self.running:
             for lst in self.world:
                 for loc in lst:
@@ -54,15 +55,15 @@ The Map class. Manages a piece of terrain for the simulation.
         return self.scale
 
 
-    def get_printable(self) -> [[(float, float, float, float)]]:
-        objs: [[Colour]] = []
+    def get_printable(self) -> [[Colour]]:
+        colours: [[Colour]] = []
 
         for j in range(self.height):
-            objs.append([None] * self.width)
+            colours.append([None] * self.width)
 
         for i in range(self.height):
             for j in range(self.width):
-                objs[i][j] = self.world[i][j].get_colour().get_rgba()
+                colours[i][j] = self.world[i][j].get_colour()
 
-        return objs
+        return colours
 
