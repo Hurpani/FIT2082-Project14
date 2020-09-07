@@ -9,7 +9,7 @@ from matplotlib import colors
 box_width = 160
 box_height = 260
 tunnel_length = 400 # tunnel_length must be greater than or equal to 2* box width
-grid_size = 16
+grid_size = 12
 
 forage_key = 'f'
 nest_key = 'n'

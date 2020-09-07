@@ -103,4 +103,7 @@ The Location class. Manages a location in a map.
         """\
     Return whether or not an actor can enter this location.
         """
-        return self.ground.is_passable()# and self.actor is None
+        if self.ground.is_passable() and self.actor is None:
+            return True
+        else:
+            return False

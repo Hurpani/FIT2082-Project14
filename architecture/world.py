@@ -39,6 +39,7 @@ The Map class. Manages a piece of terrain for the simulation.
         if 0 <= x <= self.width and 0 <= y <= self.height:
             self.world[y][x] = location
         else:
+            print([y,x])
             raise InvalidLocationException()
 
 

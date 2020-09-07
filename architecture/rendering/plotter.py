@@ -25,8 +25,6 @@ class Plotter:
                     colour_dict[colours[i][j].get_rgba()] = len(colour_dict)
                     cmap.append(colours[i][j].get_rgba())
                 colour_list_of_list[i].append(colour_dict[colours[i][j].get_rgba()])
-        for line in colour_list_of_list:
-            print(line)
         cmap = mpl.colors.ListedColormap(cmap)
         plt.figure(figsize=(len(colour_list_of_list[0]), len(colour_list_of_list)))
         plt.axis("off")

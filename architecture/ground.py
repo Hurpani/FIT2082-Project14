@@ -1,8 +1,10 @@
 from abc import abstractmethod
 from architecture.kinds import Kind
+from architecture.location import Location
 from architecture.position import Position
 from architecture.rendering.colour import Colour
 from architecture.rendering.renderable import Renderable
+from architecture.world import World
 
 
 class Ground(Renderable):
@@ -31,6 +33,9 @@ A piece of ground participating in the simulation.
         self.kinds = kinds
         self.pos = pos
 
+    def tick(self, world: World, elapsed: float, location: Location):
+        pass
+
 class Tunnel(Ground):
 
     def create(self, pos: Position = Position(), kinds: [Kind] = []) -> Ground:
@@ -57,6 +62,7 @@ class Tunnel(Ground):
     def __init__(self, pos: Position, kinds: [Kind]):
         self.kinds = kinds
         self.pos = pos
+        self.is_free = True
 
 class Nest(Ground):
 
@@ -84,6 +90,7 @@ class Nest(Ground):
     def __init__(self, pos: Position, kinds: [Kind]):
         self.kinds = kinds
         self.pos = pos
+        self.is_free = True
 
 class ForageGrounds(Ground):
 
@@ -110,6 +117,7 @@ class ForageGrounds(Ground):
     def __init__(self, pos: Position, kinds: [Kind]):
         self.kinds = kinds
         self.pos = pos
+        self.is_free = True
 
 class Wall(Ground):
     def create(self, pos: Position = Position(), kinds: [Kind] = []) -> Ground:
@@ -135,4 +143,5 @@ class Wall(Ground):
     def __init__(self, pos: Position, kinds: [Kind]):
         self.kinds = kinds
         self.pos = pos
+        self.is_free = False
 
