@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING
 from architecture.exceptions.invalid_location import InvalidLocationException
 from architecture.location import Location
 from architecture.rendering.colour import Colour
-
+from architecture.rendering.plotter import Plotter
 
 class World:
     """\
@@ -32,13 +32,12 @@ The Map class. Manages a piece of terrain for the simulation.
         for i in range(height):
             self.world.append([None] * width)
 
-
     def set_location(self, location: Location, x: int, y: int):
         """\
     Set a grid location in this world to the specified Location instance.
         """
         if 0 <= x <= self.width and 0 <= y <= self.height:
-            self.world[x][y] = location
+            self.world[y][x] = location
         else:
             raise InvalidLocationException()
 
@@ -49,7 +48,6 @@ The Map class. Manages a piece of terrain for the simulation.
             for lst in self.world:
                 for loc in lst:
                     loc.tick(self, self.delay)
-
 
     def get_scale(self) -> float:
         return self.scale
@@ -66,4 +64,3 @@ The Map class. Manages a piece of terrain for the simulation.
                 colours[i][j] = self.world[i][j].get_colour()
 
         return colours
-

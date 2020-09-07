@@ -10,9 +10,7 @@ class Ant(Actor):
     """\
 A temporary test class.
     """
-
-    @staticmethod
-    def create(pos: Position = Position(), kinds: [Kind] = []) -> Actor:
+    def create(self, pos: Position = Position(), kinds: [Kind] = []) -> Actor:
         return Ant(pos, kinds)
 
 
@@ -32,12 +30,13 @@ A temporary test class.
     def add_kind(self, kind: Kind):
         self.kinds.append(kind)
 
-
-    def get_colour(self) -> Colour:
-        return Colour()
+    @staticmethod
+    def get_colour() -> Colour:
+        return Colour(255,0,0)
 
 
     def __init__(self, pos: Position, kinds: [Kind]):
         self.kinds = kinds
+        self.pos = pos
 
 

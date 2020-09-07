@@ -2,7 +2,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 ##############################
-
+import random
 import networkx as nx
 import matplotlib as mpl
 from matplotlib import pyplot as plt
@@ -10,10 +10,13 @@ from matplotlib import colors
 from ant_simulation.ant import Ant
 from architecture.actor import Actor
 from architecture.generation import factory
+from architecture.ground import Tunnel,Nest,ForageGrounds,Wall
 from architecture.kinds import Kind
+from architecture.location import Location
 from architecture.position import Position
-
-
+from architecture.rendering.plotter import Plotter
+from architecture.world import World
+from architecture.exceptions.invalid_char import InvalidCharacterException
 def make_and_show_box():
     # average non queen is 16mm long with a range of 9.7mm to 26.3mm
     # given a 16mm^2 grid the boxes are 160mm * 256mm
@@ -82,6 +85,51 @@ def make_and_show_box():
 
 
 if __name__ == "__main__":
+    file_name = "output.txt"
+
+    file = open(file_name,"r")
+    width = 0
+    height = 0
+    for line in file:
+        if height == 0:
+            width = len(line.split())
+        height += 1
+    file.close()
+
+    this_World = World(width,height)
+
+    factory.register_ground(Tunnel.get_id(), Tunnel.create)
+    factory.register_ground(Nest.get_id(), Nest.create)
+    factory.register_ground(ForageGrounds.get_id(), ForageGrounds.create)
+    factory.register_ground(Wall.get_id(), Wall.create)
+
+    file = open(file_name, "r")
+    line_no = 0
+    for line in file:
+        line_list = line.split()
+        for i in range(len(line_list)):
+            #forage_key = 'f'
+            #nest_key = 'n'
+            #tunnel_key = 't'
+            #wall_key = "w"
+            if line_list[i] == "t" :
+                this_World.set_location(factory.make_ground("Tunnel", Position(i,line_no)),i,line_no)
+            elif line_list[i] == "n":
+                this_World.set_location(factory.make_ground("Nest", Position(i,line_no)),i,line_no)
+            elif line_list[i] == "f":
+                this_World.set_location(factory.make_ground("ForageGrounds", Position(i,line_no)),i,line_no)
+            elif line_list[i] == "w":
+                this_World.set_location(factory.make_ground("Wall", Position(i,line_no)),i,line_no)
+            else:
+                raise InvalidCharacterException()
+
+        line_no += 1
+
+    file.close()
+
+
+
+
     # TODO :
     #   -> Create a file-reader which accepts a file such as is output by txt_creator.py and
     #      uses the factory to generate the relevant Objects, Actors and Grounds.
@@ -89,13 +137,18 @@ if __name__ == "__main__":
     #          they have a series of Kinds, and also are not present necessarily in every Location.
     #   -> Populate a World with these.
 
+
     factory.register_actor(Ant.get_id(), Ant.create)
     print()
     # Access the private dictionary for the Kind enum to get the kind by its string name.
-    actor: Actor = factory.make_actor("ant", Position(), Kind["DEFAULT"])
+    actor: Actor = factory.make_actor("ant", Position(2,2), Kind["DEFAULT"])
     print("Here's a factory-generated ant:")
     print(actor.get_id())
     print("Here are the Kinds attached to this ant:")
     print(actor.get_kinds())
     print()
     #make_and_show_box()
+
+    this_World.set_location(factory.make_actor("ant", Position(2,2), Kind["DEFAULT"]),2,2)
+
+    Plotter.draw_world(this_World)
