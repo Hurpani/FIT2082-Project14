@@ -3,7 +3,6 @@ from architecture.actor import Actor
 from architecture.kinds import Kind
 from architecture.rendering.colour import Colour
 
-
 class Cleaner(Ant):
     ID: str = "Cleaner"
     COLOUR: Colour = Colour(0, 100, 0)

@@ -3,7 +3,6 @@ from architecture.actor import Actor
 from architecture.kinds import Kind
 from architecture.rendering.colour import Colour
 
-
 class Forager(Ant):
     ID: str = "Forager"
     COLOUR: Colour = Colour(255,128,0)

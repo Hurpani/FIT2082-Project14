@@ -14,7 +14,7 @@ from ant_simulation.grounds.wall import Wall
 box_width = 160
 box_height = 260
 tunnel_length = 400 # tunnel_length must be greater than or equal to 2* box width
-grid_size = 12
+grid_size = 5
 
 forage_key = ForageGrounds.ID
 nest_key = Nest.ID
@@ -26,8 +26,8 @@ wall_key = Wall.ID
 #tunnel_key = 1
 #wall_key = 0
 
-tunnel_height_grid = 2
-tunnel_entrance_grid = 2
+tunnel_height_grid = 4
+tunnel_entrance_grid = 4
 
 file_name = "output.txt"
 #########################################
