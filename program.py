@@ -30,6 +30,7 @@ if __name__ == "__main__":
     factory.register_ground(Wall.get_id(), Wall.create)
 
     world: World = create_world("output.txt", "actors.txt", "")
+    #world.run()
     Plotter.draw_world(world)
 
 

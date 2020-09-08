@@ -30,7 +30,8 @@ The Location class. Manages a location in a map.
 
 
     def tick(self, world: World, elapsed: float, position: Position):
-        self.actor.tick(world, elapsed, self, position)
+        if self.actor != None:
+            self.actor.tick(world, elapsed, self, position)
         for obj in self.objects:
             obj.tick(world, elapsed, self, position)
 
