@@ -9,7 +9,6 @@ from architecture.exceptions.invalid_location import InvalidLocationException
 from architecture.location import Location
 from architecture.position import Position
 from architecture.rendering.colour import Colour
-from architecture.rendering.plotter import Plotter
 
 class World:
     """\

@@ -2,7 +2,6 @@ from typing import Callable, Dict, List
 from architecture.actor import Actor
 from architecture.ground import Ground
 from architecture.object import Object
-from architecture.position import Position
 from architecture.exceptions.invalid_id import InvalidIdException
 from architecture.kinds import Kind
 
