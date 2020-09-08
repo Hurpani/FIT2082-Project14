@@ -64,10 +64,16 @@ The Map class. Manages a piece of terrain for the simulation.
     def run(self, iterations: int = DEFAULT_ITERATIONS):
         self.__running = True
         count: int = 0
+        # TODO : Make this nicer?
+        actors: [(Actor, Location, Position)] = []
         while self.__running and count < iterations:
             for x in range(self.__width):
                 for y in range(self.__height):
-                    self.__world[x][y].tick(self, self.__delay, Position(x, y))
+                    _updatable: (Actor, Location, Position) = self.__world[x][y].tick(self, self.__delay, Position(x, y))
+                    if _updatable[0] is not None:
+                        actors.append(_updatable)
+            for (actor, location, position) in actors:
+                actor.tick(self, self.__delay, location, position)
             count += 1
 
 

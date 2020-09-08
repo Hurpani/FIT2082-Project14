@@ -29,11 +29,10 @@ The Location class. Manages a location in a map.
         self.objects: [Object] = []      # 0..*
 
 
-    def tick(self, world: World, elapsed: float, position: Position):
-        if self.actor != None:
-            self.actor.tick(world, elapsed, self, position)
+    def tick(self, world: World, elapsed: float, position: Position) -> (Actor, Location, Position):
         for obj in self.objects:
             obj.tick(world, elapsed, self, position)
+        return self.actor, self, position
 
 
     def get_objects_colour(self) -> Colour:
