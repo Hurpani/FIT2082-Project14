@@ -16,6 +16,8 @@ class World:
 The Map class. Manages a piece of terrain for the simulation.
     """
 
+    DEFAULT_ITERATIONS: int = 100
+
     def __init__(self, width: int, height: int, scale: float = 1.0, delay: float = 1.0):
         """\
     Constructor for the world class. Accepts a scale as an argument, which informs locations of
@@ -60,12 +62,14 @@ The Map class. Manages a piece of terrain for the simulation.
             raise InvalidLocationException()
 
 
-    def run(self):
+    def run(self, iterations: int = DEFAULT_ITERATIONS):
         self.__running = True
-        while self.__running:
+        count: int = 0
+        while self.__running and count < iterations:
             for x in range(self.__width):
                 for y in range(self.__height):
                     self.__world[x][y].tick(self, self.__delay, Position(x, y))
+            count += 1
 
 
     def get_scale(self) -> float:
