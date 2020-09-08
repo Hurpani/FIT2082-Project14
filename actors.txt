@@ -1,3 +1,4 @@
-Forager 1 2
-Nurse 2 3
-Queen 3 1
+Forager 30 5
+Nurse 29 5
+Queen 28 5
+Cleaner 27 5

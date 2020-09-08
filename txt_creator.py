@@ -105,6 +105,7 @@ def display_map_if_keys_numbers():
     plt.show()
 
 file = open(file_name,"w+")
+file.write(str(len(stiched_map[0])) + " " + str(len(stiched_map))+"\n")
 for i in range(len(stiched_map)):
     for j in range(len(stiched_map[0])):
         file.write(str(stiched_map[i][j]) + " ")

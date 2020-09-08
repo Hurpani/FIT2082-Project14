@@ -18,6 +18,7 @@ The Plotter class. Responsible for parsing a list of lists of colours, and drawi
     """
 
     def draw_world(world: World):
+
         """\
     Draws a World in its current state.
         """
@@ -26,13 +27,13 @@ The Plotter class. Responsible for parsing a list of lists of colours, and drawi
         colour_list_of_list = []
         cmap = []
         colour_dict = {}
-        for i in range(len(colours)):
+        for i in range(len(colours[0])):
             colour_list_of_list.append([])
-            for j in range(len(colours[0])):
-                if colours[i][j].get_rgba() not in colour_dict:
-                    colour_dict[colours[i][j].get_rgba()] = len(colour_dict)
-                    cmap.append(colours[i][j].get_rgba())
-                colour_list_of_list[i].append(colour_dict[colours[i][j].get_rgba()])
+            for j in range(len(colours)):
+                if colours[j][i].get_rgba() not in colour_dict:
+                    colour_dict[colours[j][i].get_rgba()] = len(colour_dict)
+                    cmap.append(colours[j][i].get_rgba())
+                colour_list_of_list[i].append(colour_dict[colours[j][i].get_rgba()])
         cmap = mpl.colors.ListedColormap(cmap)
         plt.figure(figsize=(len(colour_list_of_list[0]), len(colour_list_of_list)))
         plt.axis("off")

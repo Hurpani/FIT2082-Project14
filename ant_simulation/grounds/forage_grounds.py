@@ -8,7 +8,7 @@ class ForageGrounds(Ground):
 
     ID: str = "ForageGrounds"
     IS_PASSABLE: bool = True
-    COLOUR: Colour = Colour(255, 255, 255)
+    COLOUR: Colour = Colour(0, 255, 120)
 
     @staticmethod
     def create(kinds: [Kind] = []) -> Ground:

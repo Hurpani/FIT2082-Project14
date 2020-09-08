@@ -29,7 +29,7 @@ if __name__ == "__main__":
     factory.register_ground(ForageGrounds.get_id(), ForageGrounds.create)
     factory.register_ground(Wall.get_id(), Wall.create)
 
-    world: World = create_world("basic_world.txt", "actors.txt", "")
+    world: World = create_world("output.txt", "actors.txt", "")
     Plotter.draw_world(world)
 
 

@@ -6,7 +6,7 @@ from architecture.rendering.colour import Colour
 
 class Cleaner(Ant):
     ID: str = "Cleaner"
-    COLOUR: Colour = Colour(50, 205, 0)
+    COLOUR: Colour = Colour(0, 100, 0)
 
     @staticmethod
     def create(kinds: [Kind] = []) -> Actor:

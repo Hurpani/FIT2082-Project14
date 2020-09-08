@@ -8,7 +8,7 @@ class Nest(Ground):
 
     ID: str = "Nest"
     IS_PASSABLE: bool = True
-    COLOUR: Colour = Colour(0, 255, 120)
+    COLOUR: Colour = Colour(255, 255, 255)
 
     @staticmethod
     def create(kinds: [Kind] = []) -> Ground:

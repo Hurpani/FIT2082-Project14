@@ -6,7 +6,7 @@ from architecture.rendering.colour import Colour
 
 class Forager(Ant):
     ID: str = "Forager"
-    COLOUR: Colour = Colour(50,205,0)
+    COLOUR: Colour = Colour(255,128,0)
 
     @staticmethod
     def create(kinds: [Kind] = []) -> Actor:
