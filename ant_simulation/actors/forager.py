@@ -5,6 +5,8 @@ from architecture.rendering.colour import Colour
 
 
 class Forager(Ant):
+    ID: str = "Forager"
+    COLOUR: Colour = Colour(50,205,0)
 
     @staticmethod
     def create(kinds: [Kind] = []) -> Actor:
@@ -12,11 +14,11 @@ class Forager(Ant):
 
     @staticmethod
     def get_id() -> str:
-        return("Forager")
+        return Forager.ID
 
     @staticmethod
     def get_colour() -> Colour:
-        return Colour(255,165,0)
+        return Forager.COLOUR
 
     def __init__(self, kinds: [Kind]):
         super().__init__(kinds)

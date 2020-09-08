@@ -3,7 +3,10 @@ from architecture.actor import Actor
 from architecture.kinds import Kind
 from architecture.rendering.colour import Colour
 
+
 class Cleaner(Ant):
+    ID: str = "Cleaner"
+    COLOUR: Colour = Colour(50, 205, 0)
 
     @staticmethod
     def create(kinds: [Kind] = []) -> Actor:
@@ -11,11 +14,11 @@ class Cleaner(Ant):
 
     @staticmethod
     def get_id() -> str:
-        return("Cleaner")
+        return Cleaner.ID
 
     @staticmethod
     def get_colour() -> Colour:
-        return Colour(50,205,0)
+        return Cleaner.COLOUR
 
     def __init__(self, kinds: [Kind]):
         super().__init__(kinds)

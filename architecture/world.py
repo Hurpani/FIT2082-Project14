@@ -25,23 +25,23 @@ The Map class. Manages a piece of terrain for the simulation.
         @:param height: the number of tiles vertically of this World.
         @:param scale: the real-world dimensions of this World.
         """
-        self.running: bool = False
-        self.delay: float = delay
+        self.__running: bool = False
+        self.__delay: float = delay
 
-        self.width: int = width
-        self.height: int = height
-        self.scale: float = scale
-        self.world: [[Location]] = []
+        self.__width: int = width
+        self.__height: int = height
+        self.__scale: float = scale
+        self.__world: [[Location]] = []
         for i in range(width):
-            self.world.append([None] * height)
+            self.__world.append([None] * height)
 
 
     def set_location(self, location: Location, x: int, y: int):
         """\
     Set a grid location in this world to the specified Location instance.
         """
-        if 0 <= x < self.width and 0 <= y < self.height:
-            self.world[x][y] = location
+        if 0 <= x < self.__width and 0 <= y < self.__height:
+            self.__world[x][y] = location
         else:
             raise InvalidLocationException()
 
@@ -54,32 +54,36 @@ The Map class. Manages a piece of terrain for the simulation.
 
 
     def get_location(self, x: int, y: int):
-        if 0 <= x < self.width and 0 <= y < self.height:
-            return self.world[x][y]
+        if 0 <= x < self.__width and 0 <= y < self.__height:
+            return self.__world[x][y]
         else:
             raise InvalidLocationException()
 
 
     def run(self):
-        self.running = True
-        while self.running:
-            for x in range(self.width):
-                for y in range(self.height):
-                    self.world[x][y].tick(self, self.delay, Position(x, y))
+        self.__running = True
+        while self.__running:
+            for x in range(self.__width):
+                for y in range(self.__height):
+                    self.__world[x][y].tick(self, self.__delay, Position(x, y))
 
 
     def get_scale(self) -> float:
-        return self.scale
+        return self.__scale
+
+
+    def get_dimensions(self) -> (int, int):
+        return self.__width, self.__height
 
 
     def get_printable(self) -> [[Colour]]:
         colours: [[Colour]] = []
 
-        for j in range(self.width):
-            colours.append([None] * self.height)
+        for j in range(self.__width):
+            colours.append([None] * self.__height)
 
-        for i in range(self.width):
-            for j in range(self.height):
+        for i in range(self.__width):
+            for j in range(self.__height):
                 colours[i][j] = self.get_location(i, j).get_colour()
 
         return colours

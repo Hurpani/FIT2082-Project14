@@ -8,6 +8,8 @@ from architecture.world import World
 
 
 class Queen(Ant):
+    ID: str = "Queen"
+    COLOUR: Colour = Colour(75, 0, 130)
 
     @staticmethod
     def create(kinds: [Kind] = []) -> Actor:
@@ -15,21 +17,19 @@ class Queen(Ant):
 
     @staticmethod
     def get_id() -> str:
-        return("Queen")
+        return Queen.ID
 
     def tick(self, world: World, elapsed: float, location: Location, pos: Position):
         possible_free_locations = []
         for i in range(-1,2):
             for j in range(-1,2):
-                if world.world[pos.get_coordinates[1]+i][pos.get_coordinates[0]+j].is_free():
+                if world.get_location(pos.get_coordinates[1]+i, pos.get_coordinates[0]+j).is_free():
                     possible_free_locations.append([pos.get_coordinates[1]+i,pos.get_coordinates[0]+j])
         print(possible_free_locations)
 
-
     @staticmethod
     def get_colour() -> Colour:
-        return Colour(75,0,130)
-
+        return Queen.COLOUR
 
     def __init__(self, kinds: [Kind]):
         super().__init__(kinds)
