@@ -6,15 +6,20 @@ from matplotlib import colors
 #########################################
 #Parameters
 #########################################
+from ant_simulation.grounds.forage_grounds import ForageGrounds
+from ant_simulation.grounds.nest import Nest
+from ant_simulation.grounds.tunnel import Tunnel
+from ant_simulation.grounds.wall import Wall
+
 box_width = 160
 box_height = 260
 tunnel_length = 400 # tunnel_length must be greater than or equal to 2* box width
 grid_size = 12
 
-forage_key = 'f'
-nest_key = 'n'
-tunnel_key = 't'
-wall_key = "w"
+forage_key = ForageGrounds.ID
+nest_key = Nest.ID
+tunnel_key = Tunnel.ID
+wall_key = Wall.ID
 
 #forage_key = 3
 #nest_key = 2

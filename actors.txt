@@ -1,0 +1,3 @@
+Forager 1 2
+Nurse 2 3
+Queen 3 1
