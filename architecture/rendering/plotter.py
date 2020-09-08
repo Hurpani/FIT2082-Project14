@@ -1,15 +1,23 @@
+##############################
+from __future__ import annotations
+from typing import TYPE_CHECKING
+##############################
+if TYPE_CHECKING:
+    from architecture.world import World
 
 from architecture.rendering.colour import Colour
 import matplotlib as mpl
 from matplotlib import pyplot as plt
 from matplotlib import colors
 
+
 class Plotter:
     """\
-
+The Plotter class. Responsible for parsing a list of lists of colours, and drawing them
+    in a grid to the screen.
     """
 
-    def draw_world(world):
+    def draw_world(world: World):
         """\
     Draws a World in its current state.
         """

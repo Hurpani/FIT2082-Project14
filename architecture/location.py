@@ -13,6 +13,7 @@ if TYPE_CHECKING:
     from architecture.object import Object
     from architecture.world import World
     from architecture.kinds import Kind
+    from architecture.position import Position
 
 
 class Location(ABC):
@@ -28,10 +29,10 @@ The Location class. Manages a location in a map.
         self.objects: [Object] = []      # 0..*
 
 
-    def tick(self, world: World, elapsed: float):
-        self.actor.tick(world, elapsed, self)
+    def tick(self, world: World, elapsed: float, position: Position):
+        self.actor.tick(world, elapsed, self, position)
         for obj in self.objects:
-            obj.tick(world, elapsed, self)
+            obj.tick(world, elapsed, self, position)
 
 
     def get_objects_colour(self) -> Colour:
@@ -103,7 +104,4 @@ The Location class. Manages a location in a map.
         """\
     Return whether or not an actor can enter this location.
         """
-        if self.ground.is_passable() and self.actor is None:
-            return True
-        else:
-            return False
+        return self.ground.is_passable() and self.actor is None

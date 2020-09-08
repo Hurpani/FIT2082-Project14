@@ -15,11 +15,11 @@ if TYPE_CHECKING:
 
 class Actor(Renderable):
     """\
-An moving, reacting object participating in the simulation.
+A moving, reacting object participating in the simulation.
     """
 
     @staticmethod
-    def create(pos: Position = Position(), kinds: [Kind] = []):
+    def create(kinds: [Kind] = []) -> Actor:
         pass
 
 
@@ -29,14 +29,18 @@ An moving, reacting object participating in the simulation.
 
 
     @abstractmethod
-    def tick(self, world: World, elapsed: float, location: Location):
+    def tick(self, world: World, elapsed: float, location: Location, position: Position):
         pass
 
 
     @abstractmethod
     def add_kind(self, kind: Kind):
-        pass
+        self.kinds.append(kind)
 
 
     def get_kinds(self) -> [Kind]:
-        return []
+        return self.kinds
+
+
+    def __init__(self, kinds: [Kind] = []):
+        self.kinds = kinds

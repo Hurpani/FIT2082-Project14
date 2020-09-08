@@ -5,6 +5,7 @@ from typing import TYPE_CHECKING
 
 from architecture.exceptions.invalid_location import InvalidLocationException
 from architecture.location import Location
+from architecture.position import Position
 from architecture.rendering.colour import Colour
 from architecture.rendering.plotter import Plotter
 
@@ -29,26 +30,34 @@ The Map class. Manages a piece of terrain for the simulation.
         self.height: int = height
         self.scale: float = scale
         self.world: [[Location]] = []
-        for i in range(height):
-            self.world.append([None] * width)
+        for i in range(width):
+            self.world.append([None] * height)
+
 
     def set_location(self, location: Location, x: int, y: int):
         """\
     Set a grid location in this world to the specified Location instance.
         """
-        if 0 <= x <= self.width and 0 <= y <= self.height:
-            self.world[y][x] = location
+        if 0 <= x < self.width and 0 <= y < self.height:
+            self.world[x][y] = location
         else:
-            print([y,x])
+            raise InvalidLocationException()
+
+
+    def get_location(self, x: int, y: int):
+        if 0 <= x < self.width and 0 <= y < self.height:
+            return self.world[x][y]
+        else:
             raise InvalidLocationException()
 
 
     def run(self):
         self.running = True
         while self.running:
-            for lst in self.world:
-                for loc in lst:
-                    loc.tick(self, self.delay)
+            for x in range(self.width):
+                for y in range(self.height):
+                    self.world[x][y].tick(self, self.delay, Position(x, y))
+
 
     def get_scale(self) -> float:
         return self.scale
@@ -57,11 +66,11 @@ The Map class. Manages a piece of terrain for the simulation.
     def get_printable(self) -> [[Colour]]:
         colours: [[Colour]] = []
 
-        for j in range(self.height):
-            colours.append([None] * self.width)
+        for j in range(self.width):
+            colours.append([None] * self.height)
 
-        for i in range(self.height):
-            for j in range(self.width):
-                colours[i][j] = self.world[i][j].get_colour()
+        for i in range(self.width):
+            for j in range(self.height):
+                colours[i][j] = self.get_location(i, j).get_colour()
 
         return colours
