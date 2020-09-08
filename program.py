@@ -29,5 +29,6 @@ if __name__ == "__main__":
     factory.register_ground(Wall.get_id(), Wall.create)
 
     world: World = create_world("output.txt", "actors.txt", "")
-    world.run(5)
-    Plotter.draw_world(world)
+    for i in range(10):
+        world.run(1)
+        Plotter.draw_world(world)
