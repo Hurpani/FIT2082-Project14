@@ -1,7 +1,6 @@
 ##############################
 from __future__ import annotations
 ##############################
-import random
 from ant_simulation.actors.ant import Ant
 from ant_simulation.actors.cleaner import Cleaner
 from ant_simulation.actors.forager import Forager
