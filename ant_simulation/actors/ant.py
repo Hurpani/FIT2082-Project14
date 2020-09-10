@@ -26,19 +26,41 @@ A temporary test class.
 
 
     def tick(self, world: World, elapsed: float, location: Location, pos: Position):
+        #self.change_dir_random(world,elapsed,location,pos)
+        self.change_dir_random_chance(world,elapsed,location,pos,0.1)
+
+    def change_dir_random(self, world: World, elapsed: float, location: Location, pos: Position):
         possible_free_locations = []
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if i != 0 and j != 0:
-                    try:
-                        if world.get_location(pos.get_coordinates()[0] + i, pos.get_coordinates()[1] + j).is_free():
-                            possible_free_locations.append([pos.get_coordinates()[0] + i, pos.get_coordinates()[1] + j])
-                    except:
-                        pass
+                    if world.get_location(pos.get_coordinates()[0] + i, pos.get_coordinates()[1] + j).is_free():
+                        possible_free_locations.append([pos.get_coordinates()[0] + i, pos.get_coordinates()[1] + j, i, j])
         if len(possible_free_locations) > 0:
             random_avalible_space = random.choice(possible_free_locations)
             world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
             world.get_location(random_avalible_space[0], random_avalible_space[1]).set_actor(self)
+            self.current_dir = [random_avalible_space[2],random_avalible_space[3]]
+
+    def change_dir_random_chance(self, world: World, elapsed: float, location: Location, pos: Position, chance: float):
+        if  chance < random.random():
+            if world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).is_free():
+                    world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
+                    world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).set_actor(self)
+            else:
+                next_dirr = self.give_dir_next_to_current( self.current_dir[0], self.current_dir[1])
+                if world.get_location(pos.get_coordinates()[0] + next_dirr[0][0],pos.get_coordinates()[1] + next_dirr[0][1]).is_free():
+                    world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
+                    world.get_location(pos.get_coordinates()[0] + next_dirr[0][0], pos.get_coordinates()[1] + next_dirr[0][1]).set_actor(self)
+
+                elif world.get_location(pos.get_coordinates()[0] + next_dirr[1][0],pos.get_coordinates()[1] + next_dirr[1][1]).is_free():
+                    world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
+                    world.get_location(pos.get_coordinates()[0] + next_dirr[1][0], pos.get_coordinates()[1] + next_dirr[1][1]).set_actor(self)
+
+                else:
+                    self.change_dir_random(world,elapsed,location,pos)
+        else:
+            self.change_dir_random(world,elapsed,location,pos)
 
 
     def add_kind(self, kind: Kind):
@@ -47,10 +69,43 @@ A temporary test class.
     def get_colour(self) -> Colour:
         return Colour()
 
+    def give_dir_next_to_current(self,i,j):
+        if i == -1 and j == 1:
+            if random.random() > 0.5:
+                return([[-1,0],[0,1]])
+            return ([[0, 1],[-1, 0]])
+        if i == -1 and j == 0:
+            if random.random() > 0.5:
+                return([[-1,1],[-1,-1]])
+            return([[-1,-1],[-1,1]])
+        if i == -1 and j == -1:
+            if random.random() > 0.5:
+                return([[-1,0],[0,-1]])
+            return([[0,-1],[-1,0]])
+        if i == 0 and j == 1:
+            if random.random() > 0.5:
+                return([[-1,1],[1,1]])
+            return ([[1, 1], [-1, 1]])
+        if i == 0 and j == -1:
+            if random.random() > 0.5:
+                return([[-1,-1],[1,-1]])
+            return ([[1,-1], [-1,-1]])
+        if i == 1 and j == 1:
+            if random.random() > 0.5:
+                return([[0,1],[1,0]])
+            return([[1,0],[0,1]])
+        if i == 1 and j == 0:
+            if random.random() > 0.5:
+                return([[1,1],[1,-1]])
+            return([[1,-1],[1,1]])
+        if i == 1 and j == -1:
+            if random.random() > 0.5:
+                return([[1,0],[0,-1]])
+            return([[0,-1],[1,0]])
 
     def __init__(self, kinds: [Kind]):
         super().__init__(kinds)
-
+        self.current_dir = random.choice([[-1,-1],[-1,0],[0,-1],[1,1],[1,0],[0,1],[-1,1],[1,-1]])
 
 
 
