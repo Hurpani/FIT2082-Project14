@@ -2,8 +2,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 ##############################
+
 if TYPE_CHECKING:
     from architecture.actor import Actor
+    from architecture.object import Object
 
 from architecture.exceptions.invalid_location import InvalidLocationException
 from architecture.location import Location
@@ -50,6 +52,13 @@ The Map class. Manages a piece of terrain for the simulation.
     def add_actor(self, actor: Actor, x: int, y: int):
         if self.get_location(x, y).is_free():
             self.get_location(x, y).set_actor(actor)
+        else:
+            raise InvalidLocationException()
+
+
+    def add_object(self, object: Object, x: int, y: int):
+        if (self.get_location(x, y) is not None):
+            self.get_location(x, y).add_object(object)
         else:
             raise InvalidLocationException()
 
