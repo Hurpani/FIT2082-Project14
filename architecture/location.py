@@ -93,11 +93,14 @@ The Location class. Manages a location in a map.
         return self.ground
 
 
-    def get_objects(self) -> [Object]:
+    def get_objects(self, *with_kinds: [Kind]) -> [Object]:
         """\
     Returns the objects stored at this location.
         """
-        return self.objects
+        if len(with_kinds) == 0:
+            return self.objects
+        else:
+            return filter(lambda k : k in with_kinds, self.objects)
 
 
     def is_free(self) -> bool:
