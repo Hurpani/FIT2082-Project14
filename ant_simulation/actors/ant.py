@@ -12,7 +12,7 @@ class Ant(Actor):
 A temporary test class.
     """
 
-    DIRECTION_CHANGE_CHANCE: float = 0.25
+    DIRECTION_CHANGE_CHANCE: float = 0.4
 
     @staticmethod
     def create(kinds: [Kind] = []) -> Actor:
@@ -43,11 +43,14 @@ A temporary test class.
             random_avalible_space = random.choice(possible_free_locations)
             world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
             world.get_location(random_avalible_space[0], random_avalible_space[1]).set_actor(self)
+
+            world.get_location(random_avalible_space[0], random_avalible_space[1]).add_object(TestObject())
+
             self.current_dir = [random_avalible_space[2],random_avalible_space[3]]
 
     def change_dir_random_chance(self, world: World, elapsed: float, location: Location, pos: Position, chance: float):
         if  chance < random.random():
-            if world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).is_free():
+            if world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).is_free() and random.random() > 0.5:
                     world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
                     world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).set_actor(self)
 
