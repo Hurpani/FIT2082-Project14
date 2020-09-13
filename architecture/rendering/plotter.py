@@ -2,8 +2,10 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 ##############################
+
 if TYPE_CHECKING:
     from architecture.world import World
+    from architecture.kinds import Kind
 
 from architecture.rendering.colour import Colour
 import matplotlib as mpl
@@ -17,12 +19,11 @@ The Plotter class. Responsible for parsing a list of lists of colours, and drawi
     in a grid to the screen.
     """
 
-    def draw_world(world: World):
-
+    def draw_world(world: World, object_kinds: [Kind] = None):
         """\
     Draws a World in its current state.
         """
-        colours: [[Colour]] = world.get_printable()
+        colours: [[Colour]] = world.get_printable(object_kinds)
 
         colour_list_of_list = []
         cmap = []

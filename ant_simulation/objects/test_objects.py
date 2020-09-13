@@ -4,9 +4,9 @@ from typing import TYPE_CHECKING
 ##############################
 
 from architecture.object import Object
+from architecture.kinds import Kind
 
 if TYPE_CHECKING:
-    from architecture.kinds import Kind
     from architecture.location import Location
     from architecture.position import Position
     from architecture.world import World
@@ -29,3 +29,4 @@ class TestObject(Object):
 
     def __init__(self, kinds: [Kind] = []):
         super().__init__(kinds)
+        self.kinds.append(Kind.TRACKER)

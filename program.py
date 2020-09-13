@@ -12,6 +12,7 @@ from ant_simulation.grounds.tunnel import Tunnel
 from ant_simulation.grounds.wall import Wall
 from architecture.generation import factory
 from architecture.generation.world_builder import create_world
+from architecture.kinds import Kind
 from architecture.rendering.plotter import Plotter
 from architecture.world import World
 
@@ -31,4 +32,4 @@ if __name__ == "__main__":
     world: World = create_world("output.txt", "actors_random_walks.txt", "")
     for i in range(10):
         world.run(100)
-        Plotter.draw_world(world)
+        Plotter.draw_world(world, [Kind.TRACKER])

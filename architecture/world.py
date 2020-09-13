@@ -6,6 +6,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from architecture.actor import Actor
     from architecture.object import Object
+    from architecture.kinds import Kind
 
 from architecture.exceptions.invalid_location import InvalidLocationException
 from architecture.world_state import WorldState
@@ -95,25 +96,25 @@ The Map class. Manages a piece of terrain for the simulation.
         return self.__width, self.__height
 
 
-    def get_max_objects_in_location(self) -> int:
+    def get_max_objects_in_location(self, kinds: [Kind] = None) -> int:
         c: int = 0
         for lst in self.__world:
             for loc in lst:
-                t: int = len(loc.get_objects())
+                t: int = len(loc.get_objects()) if kinds is None else len(loc.get_objects(kinds))
                 if t > c:
                     c = t
         return c
 
 
-    def get_printable(self) -> [[Colour]]:
+    def get_printable(self, object_kinds: [Kind] = None) -> [[Colour]]:
         colours: [[Colour]] = []
-        world_state: WorldState = WorldState(self.get_max_objects_in_location())
+        world_state: WorldState = WorldState(self.get_max_objects_in_location(object_kinds))
 
         for j in range(self.__width):
             colours.append([None] * self.__height)
 
         for i in range(self.__width):
             for j in range(self.__height):
-                colours[i][j] = self.get_location(i, j).get_colour(world_state)
+                colours[i][j] = self.get_location(i, j).get_colour(world_state, object_kinds)
 
         return colours

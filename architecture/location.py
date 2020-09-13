@@ -23,6 +23,7 @@ The Location class. Manages a location in a map.
     """
 
     DEFAULT_OBJECTS_BASE_COLOUR: Colour = Colour(1, 0, 0)
+    MIN_COLOUR_VAL: int = 50
 
     def __init__(self, ground: Ground):
         self.ground: Ground = ground     # 1..1
@@ -37,13 +38,14 @@ The Location class. Manages a location in a map.
 
 
     def get_objects_colour(self, world_state: WorldState) -> Colour:
-        return Location.DEFAULT_OBJECTS_BASE_COLOUR.multiply((float(len(self.objects))/world_state.get_max_objects_in_location_count()) * 255)
+        return Location.DEFAULT_OBJECTS_BASE_COLOUR.multiply((float(len(self.objects))/world_state.get_max_objects_in_location_count() if world_state.get_max_objects_in_location_count() != 0 else 1) * Colour.MAX_VALUE).\
+            get_alt_blue(Location.MIN_COLOUR_VAL)
 
 
-    def get_colour(self, world_state: WorldState) -> Colour:
+    def get_colour(self, world_state: WorldState, object_kinds: [Kind] = None) -> Colour:
         if self.actor is not None:
             return self.actor.get_colour()
-        elif len(self.objects) > 0:
+        elif len(self.get_objects(object_kinds)) > 0:
             return self.get_objects_colour(world_state)
         else:
             return self.ground.get_colour()
@@ -102,7 +104,9 @@ The Location class. Manages a location in a map.
         if len(with_kinds) == 0:
             return self.objects
         else:
-            return filter(lambda k : k in with_kinds, self.objects)
+            # FIXME:
+            return self.objects
+            # return list(filter(lambda k : k in with_kinds, self.objects))
 
 
     def is_free(self) -> bool:

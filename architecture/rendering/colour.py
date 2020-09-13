@@ -19,6 +19,18 @@ class Colour:
         return Colour(self.r * amount, self.g * amount, self.b * amount)
 
 
+    def get_alt_red(self, val: int):
+        return Colour(val, self.g, self.b)
+
+
+    def get_alt_green(self, val: int):
+        return Colour(self.r, val, self.b)
+
+
+    def get_alt_blue(self, val: int):
+        return Colour(self.r, self.g, val)
+
+
     def get_rgba(self) -> (float, float, float, float):
         """\
     Returns the floating-point rgba 4-tuple representing this colour (fully opaque).
