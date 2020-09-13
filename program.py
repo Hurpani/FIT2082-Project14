@@ -32,4 +32,4 @@ if __name__ == "__main__":
     world: World = create_world("output.txt", "actors_random_walks.txt", "")
     for i in range(10):
         world.run(100)
-        Plotter.draw_world(world, [Kind.TRACKER])
+        Plotter.draw_world(world, Kind.TRACKER)

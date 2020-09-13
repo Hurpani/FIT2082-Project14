@@ -42,10 +42,10 @@ The Location class. Manages a location in a map.
             get_alt_blue(Location.MIN_COLOUR_VAL)
 
 
-    def get_colour(self, world_state: WorldState, object_kinds: [Kind] = None) -> Colour:
+    def get_colour(self, world_state: WorldState, *object_kinds: [Kind]) -> Colour:
         if self.actor is not None:
             return self.actor.get_colour()
-        elif len(self.get_objects(object_kinds)) > 0:
+        elif len(self.get_objects(*object_kinds)) > 0:
             return self.get_objects_colour(world_state)
         else:
             return self.ground.get_colour()
@@ -97,6 +97,13 @@ The Location class. Manages a location in a map.
         return self.ground
 
 
+    @staticmethod
+    def __any_in(of, lst):
+        for x in of:
+            if x in lst:
+                return True
+        return False
+
     def get_objects(self, *with_kinds: [Kind]) -> [Object]:
         """\
     Returns the objects stored at this location.
@@ -104,9 +111,7 @@ The Location class. Manages a location in a map.
         if len(with_kinds) == 0:
             return self.objects
         else:
-            # FIXME:
-            return self.objects
-            # return list(filter(lambda k : k in with_kinds, self.objects))
+            return list(filter(lambda k : self.__any_in(k.get_kinds(), with_kinds), self.objects))
 
 
     def is_free(self) -> bool:

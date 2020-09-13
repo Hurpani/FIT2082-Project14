@@ -96,25 +96,25 @@ The Map class. Manages a piece of terrain for the simulation.
         return self.__width, self.__height
 
 
-    def get_max_objects_in_location(self, kinds: [Kind] = None) -> int:
+    def get_max_objects_in_location(self, *kinds: [Kind]) -> int:
         c: int = 0
         for lst in self.__world:
             for loc in lst:
-                t: int = len(loc.get_objects()) if kinds is None else len(loc.get_objects(kinds))
+                t: int = len(loc.get_objects()) if len(kinds) > 0 else len(loc.get_objects(*kinds))
                 if t > c:
                     c = t
         return c
 
 
-    def get_printable(self, object_kinds: [Kind] = None) -> [[Colour]]:
+    def get_printable(self, *object_kinds: [Kind]) -> [[Colour]]:
         colours: [[Colour]] = []
-        world_state: WorldState = WorldState(self.get_max_objects_in_location(object_kinds))
+        world_state: WorldState = WorldState(self.get_max_objects_in_location(*object_kinds))
 
         for j in range(self.__width):
             colours.append([None] * self.__height)
 
         for i in range(self.__width):
             for j in range(self.__height):
-                colours[i][j] = self.get_location(i, j).get_colour(world_state, object_kinds)
+                colours[i][j] = self.get_location(i, j).get_colour(world_state, *object_kinds)
 
         return colours
