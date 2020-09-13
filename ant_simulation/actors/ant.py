@@ -39,31 +39,42 @@ A temporary test class.
 
     def change_dir_random(self, world: World, elapsed: float, location: Location, pos: Position):
         possible_free_locations = []
+        #scan 1 range saving taking note of all available spots
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if i != 0 and j != 0:
                     if world.get_location(pos.get_coordinates()[0] + i, pos.get_coordinates()[1] + j).is_free():
                         possible_free_locations.append([pos.get_coordinates()[0] + i, pos.get_coordinates()[1] + j, i, j])
+        #if atleast 1 available spot in 1 range
         if len(possible_free_locations) > 0:
-            random_avalible_space = random.choice(possible_free_locations)
-            self.move_ant(world,elapsed,pos,random_avalible_space)
-            self.current_dir = [random_avalible_space[2],random_avalible_space[3]]
+            #pick a random one and move there
+            random_available_space = random.choice(possible_free_locations)
+            self.move_ant(world,elapsed,pos,random_available_space)
+            self.current_dir = [random_available_space[2],random_available_space[3]]
 
     def change_dir_random_chance(self, world: World, elapsed: float, location: Location, pos: Position, chance: float):
-        if  chance < random.random():
+        if  chance < random.random(): #90% of the time
+
+            #if spot in same direction is free and passes a 33% chance, go there
             if world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).is_free() and random.random() < 1/3:
                 self.move_ant(world, elapsed, pos, [pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]])
             else:
+                #with a 50% choose the adjacent spot e.g. if going north, pick north-east 50% of the time , north-west 50% of the time
                 next_dirr = self.give_dir_next_to_current( self.current_dir[0], self.current_dir[1])
+
+                #if the first picked adjacent spot is free go there
                 if world.get_location(pos.get_coordinates()[0] + next_dirr[0][0],pos.get_coordinates()[1] + next_dirr[0][1]).is_free():
                     self.move_ant(world, elapsed, pos, [pos.get_coordinates()[0] + next_dirr[0][0], pos.get_coordinates()[1] + next_dirr[0][1]])
 
+                # else if the second picked adjacent spot is free go there
                 elif world.get_location(pos.get_coordinates()[0] + next_dirr[1][0],pos.get_coordinates()[1] + next_dirr[1][1]).is_free():
                     self.move_ant(world, elapsed, pos, [pos.get_coordinates()[0] + next_dirr[1][0], pos.get_coordinates()[1] + next_dirr[1][1]])
 
+                #else go random available spot ... and if no spot available change_dir_random will make the ant stay still
                 else:
                     self.change_dir_random(world,elapsed,location,pos)
-        else:
+
+        else: #10% of the time go random available spot ... and if no spot available change_dir_random will make the ant stay still
             self.change_dir_random(world,elapsed,location,pos)
 
 
