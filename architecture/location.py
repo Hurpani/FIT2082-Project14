@@ -14,6 +14,7 @@ if TYPE_CHECKING:
     from architecture.world import World
     from architecture.kinds import Kind
     from architecture.position import Position
+    from architecture.world_state import WorldState
 
 
 class Location(ABC):
@@ -21,7 +22,7 @@ class Location(ABC):
 The Location class. Manages a location in a map.
     """
 
-    DEFAULT_OBJECTS_COLOUR: Colour = Colour(0, 0, 0)
+    DEFAULT_OBJECTS_BASE_COLOUR: Colour = Colour(1, 0, 0)
 
     def __init__(self, ground: Ground):
         self.ground: Ground = ground     # 1..1
@@ -35,15 +36,15 @@ The Location class. Manages a location in a map.
         return self.actor, self, position
 
 
-    def get_objects_colour(self) -> Colour:
-        return Location.DEFAULT_OBJECTS_COLOUR
+    def get_objects_colour(self, world_state: WorldState) -> Colour:
+        return Location.DEFAULT_OBJECTS_BASE_COLOUR.multiply((float(len(self.objects))/world_state.get_max_objects_in_location_count()) * 255)
 
 
-    def get_colour(self) -> Colour:
+    def get_colour(self, world_state: WorldState) -> Colour:
         if self.actor is not None:
             return self.actor.get_colour()
         elif len(self.objects) > 0:
-            return self.get_objects_colour()
+            return self.get_objects_colour(world_state)
         else:
             return self.ground.get_colour()
 
@@ -63,11 +64,12 @@ The Location class. Manages a location in a map.
     Returns a list of objects in this location which have the
         specified kind.
         """
-        ret_list: [Object] = []
-        for obj in self.objects:
-            if kind in obj.get_kinds():
-                ret_list.append(obj)
-        return ret_list
+        return self.get_objects(kind)
+        # ret_list: [Object] = []
+        # for obj in self.objects:
+        #     if kind in obj.get_kinds():
+        #         ret_list.append(obj)
+        # return ret_list
 
 
     def get_actor(self) -> Actor:

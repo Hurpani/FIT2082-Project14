@@ -8,6 +8,7 @@ if TYPE_CHECKING:
     from architecture.object import Object
 
 from architecture.exceptions.invalid_location import InvalidLocationException
+from architecture.world_state import WorldState
 from architecture.location import Location
 from architecture.position import Position
 from architecture.rendering.colour import Colour
@@ -74,8 +75,8 @@ The Map class. Manages a piece of terrain for the simulation.
         self.__running = True
         count: int = 0
         # TODO : Make this nicer?
-        actors: [(Actor, Location, Position)] = []
         while self.__running and count < iterations:
+            actors: [(Actor, Location, Position)] = []
             for x in range(self.__width):
                 for y in range(self.__height):
                     _updatable: (Actor, Location, Position) = self.__world[x][y].tick(self, self.__delay, Position(x, y))
@@ -94,14 +95,25 @@ The Map class. Manages a piece of terrain for the simulation.
         return self.__width, self.__height
 
 
+    def get_max_objects_in_location(self) -> int:
+        c: int = 0
+        for lst in self.__world:
+            for loc in lst:
+                t: int = len(loc.get_objects())
+                if t > c:
+                    c = t
+        return c
+
+
     def get_printable(self) -> [[Colour]]:
         colours: [[Colour]] = []
+        world_state: WorldState = WorldState(self.get_max_objects_in_location())
 
         for j in range(self.__width):
             colours.append([None] * self.__height)
 
         for i in range(self.__width):
             for j in range(self.__height):
-                colours[i][j] = self.get_location(i, j).get_colour()
+                colours[i][j] = self.get_location(i, j).get_colour(world_state)
 
         return colours

@@ -28,7 +28,7 @@ if __name__ == "__main__":
     factory.register_ground(ForageGrounds.get_id(), ForageGrounds.create)
     factory.register_ground(Wall.get_id(), Wall.create)
 
-    world: World = create_world("output.txt", "actors.txt", "")
+    world: World = create_world("output.txt", "actors_random_walks.txt", "")
     for i in range(10):
-        world.run(1)
+        world.run(100)
         Plotter.draw_world(world)

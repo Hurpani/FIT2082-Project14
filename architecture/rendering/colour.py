@@ -15,6 +15,10 @@ class Colour:
             raise ValueError()
 
 
+    def multiply(self, amount: float):
+        return Colour(self.r * amount, self.g * amount, self.b * amount)
+
+
     def get_rgba(self) -> (float, float, float, float):
         """\
     Returns the floating-point rgba 4-tuple representing this colour (fully opaque).

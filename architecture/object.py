@@ -17,7 +17,7 @@ in the simulation.
 
 
     @staticmethod
-    def create(kinds: [Kind]):
+    def create(kinds: [Kind] = []):
         pass
 
     @abstractmethod
@@ -29,4 +29,7 @@ in the simulation.
         pass
 
     def get_kinds(self) -> [Kind]:
-        return []
+        return self.kinds
+
+    def __init__(self, kinds: [Kind] = []):
+        self.kinds = kinds

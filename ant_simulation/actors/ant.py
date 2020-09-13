@@ -1,3 +1,4 @@
+from ant_simulation.objects.test_objects import TestObject
 from architecture.actor import Actor
 from architecture.kinds import Kind
 from architecture.location import Location
@@ -10,6 +11,8 @@ class Ant(Actor):
     """\
 A temporary test class.
     """
+
+    DIRECTION_CHANGE_CHANCE: float = 0.25
 
     @staticmethod
     def create(kinds: [Kind] = []) -> Actor:
@@ -27,7 +30,7 @@ A temporary test class.
 
     def tick(self, world: World, elapsed: float, location: Location, pos: Position):
         #self.change_dir_random(world,elapsed,location,pos)
-        self.change_dir_random_chance(world,elapsed,location,pos,0.1)
+        self.change_dir_random_chance(world,elapsed,location,pos, Ant.DIRECTION_CHANGE_CHANCE)
 
     def change_dir_random(self, world: World, elapsed: float, location: Location, pos: Position):
         possible_free_locations = []
@@ -47,15 +50,27 @@ A temporary test class.
             if world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).is_free():
                     world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
                     world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).set_actor(self)
+
+                    # temporary adding of test object.
+                    world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).add_object(TestObject())
+                    # end.
             else:
                 next_dirr = self.give_dir_next_to_current( self.current_dir[0], self.current_dir[1])
                 if world.get_location(pos.get_coordinates()[0] + next_dirr[0][0],pos.get_coordinates()[1] + next_dirr[0][1]).is_free():
                     world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
                     world.get_location(pos.get_coordinates()[0] + next_dirr[0][0], pos.get_coordinates()[1] + next_dirr[0][1]).set_actor(self)
 
+                    # temporary adding of test object.
+                    world.get_location(pos.get_coordinates()[0] + next_dirr[0][0], pos.get_coordinates()[1] + next_dirr[0][1]).add_object(TestObject())
+                    # end.
+
                 elif world.get_location(pos.get_coordinates()[0] + next_dirr[1][0],pos.get_coordinates()[1] + next_dirr[1][1]).is_free():
                     world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
                     world.get_location(pos.get_coordinates()[0] + next_dirr[1][0], pos.get_coordinates()[1] + next_dirr[1][1]).set_actor(self)
+
+                    # temporary adding of test object.
+                    world.get_location(pos.get_coordinates()[0] + next_dirr[1][0], pos.get_coordinates()[1] + next_dirr[1][1]).add_object(TestObject())
+                    # end.
 
                 else:
                     self.change_dir_random(world,elapsed,location,pos)
