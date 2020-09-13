@@ -32,6 +32,11 @@ A temporary test class.
         #self.change_dir_random(world,elapsed,location,pos)
         self.change_dir_random_chance(world,elapsed,location,pos, Ant.DIRECTION_CHANGE_CHANCE)
 
+    def move_ant(self,world: World, elapsed: float, pos: Position, target:list):
+        world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
+        world.get_location(target[0], target[1]).set_actor(self)
+        world.get_location(target[0], target[1]).add_object(TestObject())
+
     def change_dir_random(self, world: World, elapsed: float, location: Location, pos: Position):
         possible_free_locations = []
         for i in range(-1, 2):
@@ -41,39 +46,20 @@ A temporary test class.
                         possible_free_locations.append([pos.get_coordinates()[0] + i, pos.get_coordinates()[1] + j, i, j])
         if len(possible_free_locations) > 0:
             random_avalible_space = random.choice(possible_free_locations)
-            world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
-            world.get_location(random_avalible_space[0], random_avalible_space[1]).set_actor(self)
-
-            world.get_location(random_avalible_space[0], random_avalible_space[1]).add_object(TestObject())
-
+            self.move_ant(world,elapsed,pos,random_avalible_space)
             self.current_dir = [random_avalible_space[2],random_avalible_space[3]]
 
     def change_dir_random_chance(self, world: World, elapsed: float, location: Location, pos: Position, chance: float):
         if  chance < random.random():
             if world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).is_free() and random.random() < 1/3:
-                    world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
-                    world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).set_actor(self)
-
-                    # temporary adding of test object.
-                    world.get_location(pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]).add_object(TestObject())
-                    # end.
+                self.move_ant(world, elapsed, pos, [pos.get_coordinates()[0] + self.current_dir[0], pos.get_coordinates()[1] + self.current_dir[1]])
             else:
                 next_dirr = self.give_dir_next_to_current( self.current_dir[0], self.current_dir[1])
                 if world.get_location(pos.get_coordinates()[0] + next_dirr[0][0],pos.get_coordinates()[1] + next_dirr[0][1]).is_free():
-                    world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
-                    world.get_location(pos.get_coordinates()[0] + next_dirr[0][0], pos.get_coordinates()[1] + next_dirr[0][1]).set_actor(self)
-
-                    # temporary adding of test object.
-                    world.get_location(pos.get_coordinates()[0] + next_dirr[0][0], pos.get_coordinates()[1] + next_dirr[0][1]).add_object(TestObject())
-                    # end.
+                    self.move_ant(world, elapsed, pos, [pos.get_coordinates()[0] + next_dirr[0][0], pos.get_coordinates()[1] + next_dirr[0][1]])
 
                 elif world.get_location(pos.get_coordinates()[0] + next_dirr[1][0],pos.get_coordinates()[1] + next_dirr[1][1]).is_free():
-                    world.get_location(pos.get_coordinates()[0], pos.get_coordinates()[1]).remove_actor()
-                    world.get_location(pos.get_coordinates()[0] + next_dirr[1][0], pos.get_coordinates()[1] + next_dirr[1][1]).set_actor(self)
-
-                    # temporary adding of test object.
-                    world.get_location(pos.get_coordinates()[0] + next_dirr[1][0], pos.get_coordinates()[1] + next_dirr[1][1]).add_object(TestObject())
-                    # end.
+                    self.move_ant(world, elapsed, pos, [pos.get_coordinates()[0] + next_dirr[1][0], pos.get_coordinates()[1] + next_dirr[1][1]])
 
                 else:
                     self.change_dir_random(world,elapsed,location,pos)
