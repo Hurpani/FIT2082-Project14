@@ -8,3 +8,4 @@ The Kind enum. Allows objects in a simulation to inform each other
     """
     DEFAULT: int = 0
     TRACKER: int = 1
+    FOOD: int = 2

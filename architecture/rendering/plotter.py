@@ -39,6 +39,9 @@ The Plotter class. Responsible for parsing a list of lists of colours, and drawi
         plt.figure(figsize=(len(colour_list_of_list[0]), len(colour_list_of_list)))
         plt.axis("off")
         plt.pcolor(colour_list_of_list[::-1], cmap=cmap)
+
+        plt.get_current_fig_manager().window.state("zoomed")
+
         plt.show()
 
 

@@ -12,18 +12,19 @@ if TYPE_CHECKING:
     from architecture.world import World
 
 
+class Food(Object):
+    ID: str = "food"
 
-class TestObject(Object):
     @staticmethod
     def get_id() -> str:
-        return "test_object"
+        return Food.ID
 
     def create(kinds: [Kind] = []):
-        return TestObject(kinds)
+        return Food(kinds)
 
     def tick(self, world: World, elapsed: float, location: Location, position: Position):
         pass
 
     def __init__(self, kinds: [Kind] = []):
         super().__init__(kinds)
-        self.kinds.append(Kind.TRACKER)
+        self.kinds.append(Kind.FOOD)

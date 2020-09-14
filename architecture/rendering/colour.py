@@ -7,12 +7,9 @@ class Colour:
     MAX_VALUE: int = 255
 
     def __init__(self, r: int = 0, g: int = 0, b: int = 0):
-        if 0 <= r <= Colour.MAX_VALUE and 0 <= g <= Colour.MAX_VALUE and 0 <= b <= Colour.MAX_VALUE:
-            self.r: int = r
-            self.g: int = g
-            self.b: int = b
-        else:
-            raise ValueError()
+        self.r: int = max(min(r, Colour.MAX_VALUE), 0)
+        self.g: int = max(min(g, Colour.MAX_VALUE), 0)
+        self.b: int = max(min(b, Colour.MAX_VALUE), 0)
 
 
     def multiply(self, amount: float):

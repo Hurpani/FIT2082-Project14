@@ -33,7 +33,6 @@ A moving, reacting object participating in the simulation.
         pass
 
 
-    @abstractmethod
     def add_kind(self, kind: Kind):
         self.kinds.append(kind)
 

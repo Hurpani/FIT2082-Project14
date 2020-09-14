@@ -54,7 +54,7 @@ def make_object(id: str, *args) -> Object:
 Creates a new instance of the Object class based on the provided string
     identifier.
     """
-    return _make(id, _actor_constructors, *args)
+    return _make(id, _object_constructors, *args)
 
 
 def _make(id: str, registry: Dict, *args):

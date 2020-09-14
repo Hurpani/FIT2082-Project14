@@ -65,11 +65,23 @@ The Map class. Manages a piece of terrain for the simulation.
             raise InvalidLocationException()
 
 
-    def get_location(self, x: int, y: int):
+    def get_location(self, x: int, y: int) -> Location:
         if 0 <= x < self.__width and 0 <= y < self.__height:
             return self.__world[x][y]
         else:
             raise InvalidLocationException()
+
+
+    def get_adjacent_locations(self, x: int, y: int, r: int = 1, require_free: bool = True) -> [Location]:
+        """\
+    Returns the locations with a Manhattan distance at most r from x,y.
+        """
+        locations: [Location] = []
+        for i in range(max(x - r, 0), min(x + r + 1, self.__width - 1), 1):
+            for j in range(max(y - r, 0), min(y + r + 1, self.__height - 1), 1):
+                if abs(x - i) + abs(y - j) <= r and ((not require_free) or self.get_location(i, j).is_free()):
+                    locations.append(self.get_location(i, j))
+        return  locations
 
 
     def run(self, iterations: int = DEFAULT_ITERATIONS):
@@ -100,7 +112,7 @@ The Map class. Manages a piece of terrain for the simulation.
         c: int = 0
         for lst in self.__world:
             for loc in lst:
-                t: int = len(loc.get_objects()) if len(kinds) > 0 else len(loc.get_objects(*kinds))
+                t: int = len(loc.get_objects(*kinds)) if len(kinds) > 0 else len(loc.get_objects(*kinds))
                 if t > c:
                     c = t
         return c

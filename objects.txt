@@ -1,0 +1,10 @@
+food 65 4
+food 71 15
+food 71 18
+food 67 25
+food 57 33
+food 64 5
+food 72 25
+food 73 28
+food 63 22
+food 58 35

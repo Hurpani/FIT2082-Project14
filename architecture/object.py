@@ -12,7 +12,7 @@ An object that actors can interact with, which is participating
 in the simulation.
     """
     @staticmethod
-    def get_id(self) -> str:
+    def get_id() -> str:
         pass
 
 
@@ -20,9 +20,8 @@ in the simulation.
     def create(kinds: [Kind] = []):
         pass
 
-    @abstractmethod
     def add_kind(self, kind: Kind):
-        pass
+        self.kinds.append(kind)
 
     @abstractmethod
     def tick(self, world: World, elapsed: float, location: Location, position: Position):

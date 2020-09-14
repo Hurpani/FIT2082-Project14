@@ -32,9 +32,11 @@ def __populate_with_actors(world: World, actors_file: str) -> World:
 def __populate_with_objects(world: World, objects_file: str) -> World:
     if objects_file is None or objects_file == "":
         return world
-
-    # TODO.
-
+    with open(objects_file) as file:
+        lines: [str] = file.readlines()
+        for line in lines:
+            name, x, y = line.split()[0], int(line.split()[1]), int(line.split()[2])
+            world.add_object(factory.make_object(name), x, y)
     return world
 
 

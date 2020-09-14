@@ -61,6 +61,13 @@ The Location class. Manages a location in a map.
         self.objects.append(object)
 
 
+    def remove_object(self, obj: Object):
+        """\
+    Removes the specified Object from this Location.
+        """
+        self.objects.remove(obj)
+
+
     def get_object_by_kind(self, kind: Kind):
         """\
     Returns a list of objects in this location which have the
