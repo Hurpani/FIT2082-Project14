@@ -1,4 +1,9 @@
-sant 65 4
-sant 71 15
-sant 65 15
-sant 71 4
+sant 1 17
+sant 2 20
+sant 3 7
+sant 4 13
+sant 5 17
+sant 6 1
+sant 7 10
+sant 8 18
+sant 9 7
