@@ -13,6 +13,7 @@ from architecture.world import World
 class StigmergyAnt(Actor):
 
     COLOUR: Colour = Colour(255, 255, 0)
+    ALT_COLOUR: Colour = Colour(255, 128, 0)
     ID: str = "sant"
     DROP_CHANCE: float = 0.5
 
@@ -25,7 +26,7 @@ class StigmergyAnt(Actor):
         return StigmergyAnt.ID
 
     def get_colour(self) -> Colour:
-        return StigmergyAnt.COLOUR
+        return StigmergyAnt.COLOUR if self.carrying is None else StigmergyAnt.ALT_COLOUR
 
     def food_interaction(self, loc: Location, world: World, position: Position):
         if self.carrying is not None and Random().random() < StigmergyAnt.DROP_CHANCE:
