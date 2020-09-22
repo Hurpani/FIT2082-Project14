@@ -1,5 +1,7 @@
 ##############################
 from __future__ import annotations
+
+import random
 from typing import TYPE_CHECKING
 ##############################
 
@@ -24,16 +26,28 @@ The Location class. Manages a location in a map.
 
     DEFAULT_OBJECTS_BASE_COLOUR: Colour = Colour(1, 0, 0)
     MIN_COLOUR_VAL: int = 50
+    PHEROMONE_DETERIORATION_CHANCE: float = 0.01
 
     def __init__(self, ground: Ground):
         self.ground: Ground = ground     # 1..1
         self.actor: Actor = None         # 0..1
         self.objects: [Object] = []      # 0..*
+        self.pheromones: int = 0
+
+
+    def add_pheromones(self, num: int):
+        self.pheromones += num
+
+
+    def get_pheromone_count(self):
+        return self.pheromones
 
 
     def tick(self, world: World, elapsed: float, position: Position) -> (Actor, Location, Position):
         for obj in self.objects:
             obj.tick(world, elapsed, self, position)
+        if random.random() < Location.PHEROMONE_DETERIORATION_CHANCE and self.pheromones > 0:
+            self.pheromones -= 1
         return self.actor, self, position
 
 
