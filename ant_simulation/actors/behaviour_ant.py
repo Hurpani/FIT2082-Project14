@@ -41,7 +41,7 @@ class BehaviourAnt(Actor):
         self.current_behaviour: Behaviour = WanderBehaviour(0,1-(self.age/300),1-(self.age/600))
         self.current_behaviour.do(world, elapsed, location, position, self)
         location.add_object(TestObject())
-        self.age += 0.1
+        self.age += 0.1 * elapsed
 
 
     def __init__(self, kinds: [Kind]):
