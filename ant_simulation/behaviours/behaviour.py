@@ -1,6 +1,12 @@
-from abc import ABC, abstractmethod
+##############################
+from __future__ import annotations
+from typing import TYPE_CHECKING
+##############################
 
-from ant_simulation.actors.behaviour_ant import BehaviourAnt
+if TYPE_CHECKING:
+    from ant_simulation.actors.behaviour_ant import BehaviourAnt
+
+from abc import ABC, abstractmethod
 from architecture.location import Location
 from architecture.position import Position
 from architecture.world import World

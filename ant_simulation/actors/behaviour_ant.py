@@ -32,7 +32,7 @@ class BehaviourAnt(Actor):
         frm.remove_actor()
 
     def tick(self, world: World, elapsed: float, location: Location, position: Position):
-        self.current_behaviour.do(world, location, position, self)
+        self.current_behaviour.do(world, elapsed, location, position, self)
 
     def __init__(self, kinds: [Kind]):
         super().__init__(kinds)

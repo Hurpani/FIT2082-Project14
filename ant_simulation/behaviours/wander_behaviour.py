@@ -1,4 +1,11 @@
-from ant_simulation.actors.behaviour_ant import BehaviourAnt
+##############################
+from __future__ import annotations
+from typing import TYPE_CHECKING
+##############################
+
+if TYPE_CHECKING:
+    from ant_simulation.actors.behaviour_ant import BehaviourAnt
+
 from ant_simulation.behaviours.behaviour import Behaviour
 from architecture.location import Location
 from architecture.position import Position

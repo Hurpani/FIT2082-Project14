@@ -1,11 +1,10 @@
 ##############################
 from __future__ import annotations
-
-import random
 from typing import TYPE_CHECKING
 ##############################
 
 from abc import ABC
+import random
 from architecture.exceptions.invalid_location import InvalidLocationException
 from architecture.rendering.colour import Colour
 
