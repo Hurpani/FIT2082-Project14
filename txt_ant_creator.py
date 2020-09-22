@@ -1,10 +1,11 @@
-Q = 1
-F = 30
-C = 46
-N = 69
+Q = 0
+F = 100
+C = 0
+N = 0
+A = 0
 
 map = open("output.txt","r")
-ants_to_make = ["Forager"] * F + ["Cleaner"] *C + ["Nurse"] * N + ["Queen"] * Q
+ants_to_make = ["Forager"] * F + ["Cleaner"] *C + ["Nurse"] * N + ["Queen"] * Q + ["bant"] * A
 
 ant_txt = open("actors.txt","w")
 width,height = map.readline().split()

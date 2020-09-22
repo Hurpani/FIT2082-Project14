@@ -11,7 +11,8 @@ from architecture.world import World
 if __name__ == "__main__":
     registry.register()
 
-    world: World = create_world("output.txt", "actors.txt", "objects.txt")
+    world: World = create_world("output.txt", "actors.txt", "empty.txt")
     for i in range(10):
-        world.run(10)
-        Plotter.draw_world(world, Kind.FOOD)
+        world.run(50)
+        #Plotter.draw_world(world, Kind.FOOD)
+        Plotter.draw_world(world)
