@@ -14,5 +14,4 @@ if __name__ == "__main__":
     world: World = create_world("output.txt", "actors.txt", "empty.txt")
     for i in range(10):
         world.run(50)
-        #Plotter.draw_world(world, Kind.FOOD)
-        Plotter.draw_world(world)
+        Plotter.draw_world(world, Kind.TRACKER)

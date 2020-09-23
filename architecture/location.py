@@ -26,6 +26,7 @@ The Location class. Manages a location in a map.
     DEFAULT_OBJECTS_BASE_COLOUR: Colour = Colour(1, 0, 0)
     MIN_COLOUR_VAL: int = 50
     PHEROMONE_DETERIORATION_CHANCE: float = 0.01
+    PHEROMONE_COUNT_CAP: int = 100;
 
     def __init__(self, ground: Ground):
         self.ground: Ground = ground     # 1..1
@@ -35,7 +36,8 @@ The Location class. Manages a location in a map.
 
 
     def add_pheromones(self, num: int):
-        self.pheromones += num
+        if self.pheromones < Location.PHEROMONE_COUNT_CAP:
+            self.pheromones += num
 
 
     def get_pheromone_count(self):
@@ -46,6 +48,7 @@ The Location class. Manages a location in a map.
         for obj in self.objects:
             obj.tick(world, elapsed, self, position)
         if random.random() < Location.PHEROMONE_DETERIORATION_CHANCE and self.pheromones > 0:
+            # TODO: Fix this to be in terms of elapsed time (eg. with binomial distribution for probability).
             self.pheromones -= 1
         return self.actor, self, position
 

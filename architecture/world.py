@@ -100,6 +100,13 @@ The Map class. Manages a piece of terrain for the simulation.
             count += 1
 
 
+    @staticmethod
+    def move(frm: Location, to: Location):
+        if to.is_free():
+            to.set_actor(frm.get_actor())
+            frm.remove_actor()
+
+
     def get_scale(self) -> float:
         return self.__scale
 
