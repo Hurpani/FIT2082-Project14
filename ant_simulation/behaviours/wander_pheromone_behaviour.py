@@ -68,9 +68,9 @@ class WanderPheromoneBehaviour(Behaviour):
             # Make a random, weighted selection of these direction.
             self.facing = directions.get_random_direction()
 
+            # Apply a wobble at random.
             d: Direction = self.facing.get_wobble(random.choice(array([0, -1, 1]), p=array([1 - self.wobble_chance,
                                 self.wobble_chance/2, self.wobble_chance/2])))
-            # Apply a wobble at random.
             to: Location = world.get_location(position.x + d.get()[0], position.y + d.get()[1])
             world.move(location, to)
         except IndexError:
