@@ -38,7 +38,7 @@ Nurse 55 2
 Nurse 56 31
 Nurse 57 2
 Nurse 58 2
-Nurse 59 56
+Nurse 59 50
 Nurse 60 2
 Nurse 61 24
 Nurse 62 23
@@ -113,9 +113,9 @@ Forager 72 43
 Forager 73 4
 Forager 74 41
 Forager 75 4
-Forager 76 48
+Forager 76 45
 Forager 77 4
-Forager 78 49
+Forager 78 46
 Forager 79 4
 Forager 80 40
 Forager 49 5
