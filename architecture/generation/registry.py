@@ -1,4 +1,5 @@
 from ant_simulation.actors.ant import Ant
+from ant_simulation.actors.behaviour_ant import BehaviourAnt
 from ant_simulation.actors.cleaner import Cleaner
 from ant_simulation.actors.forager import Forager
 from ant_simulation.actors.modular_ant import ModularAnt
@@ -16,11 +17,12 @@ from architecture.generation import factory
 
 def register():
     factory.register_actor(Ant.get_id(), Ant.create)
-    factory.register_actor(Nurse.get_id(), ModularAnt.create)
-    factory.register_actor(Forager.get_id(), ModularAnt.create)
-    factory.register_actor(Queen.get_id(), ModularAnt.create)
-    factory.register_actor(Cleaner.get_id(), ModularAnt.create)
+    factory.register_actor(Nurse.get_id(), BehaviourAnt.create)
+    factory.register_actor(Forager.get_id(), BehaviourAnt.create)
+    factory.register_actor(Queen.get_id(), BehaviourAnt.create)
+    factory.register_actor(Cleaner.get_id(), BehaviourAnt.create)
     factory.register_actor(StigmergyAnt.get_id(), StigmergyAnt.create)
+    factory.register_actor(BehaviourAnt.get_id(), BehaviourAnt.create)
     factory.register_actor(ModularAnt.get_id(), ModularAnt.create)
 
     factory.register_ground(Tunnel.get_id(), Tunnel.create)
