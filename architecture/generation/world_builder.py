@@ -1,3 +1,7 @@
+import ast
+from typing import Union
+
+from architecture.attributes import Attributes
 from architecture.generation import factory
 from architecture.location import Location
 from architecture.world import World
@@ -25,7 +29,14 @@ def __populate_with_actors(world: World, actors_file: str) -> World:
         lines: [str] = file.readlines()
         for line in lines:
             name, x, y = line.split()[0], int(line.split()[1]), int(line.split()[2])
-            world.add_actor(factory.make_actor(name), x, y)
+
+            attributes: Union[Attributes, None]
+            if len(line.split()) > 3:
+                attributes = Attributes(ast.literal_eval(''.join(line.split()[3:])))
+            else:
+                attributes = None
+
+            world.add_actor(factory.make_actor(name, attributes), x, y)
     return world
 
 

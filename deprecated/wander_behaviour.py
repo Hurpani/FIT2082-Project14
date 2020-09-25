@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 ##############################
 
 if TYPE_CHECKING:
-    from ant_simulation.actors.behaviour_ant import BehaviourAnt
+    from deprecated.behaviour_ant import BehaviourAnt
     from architecture.actor import Actor
 
 from ant_simulation.behaviours.behaviour import Behaviour

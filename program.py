@@ -11,7 +11,7 @@ from architecture.world import World
 if __name__ == "__main__":
     registry.register()
 
-    world: World = create_world("output.txt", "actors.txt", "empty.txt")
+    world: World = create_world("output.txt", "actors_lesser.txt", "empty.txt")
     for i in range(10):
         world.run(50)
         Plotter.draw_world(world, Kind.TRACKER)

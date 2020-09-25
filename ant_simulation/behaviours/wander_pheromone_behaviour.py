@@ -27,9 +27,9 @@ def pheromone_bias_func(bias: float) -> Callable[[World, Position, Direction, fl
     return pheromone_bias
 
 
-def hold_direction_func(var_chance: float, prev_dir: Direction) -> Callable[[World, Position, Direction, float], float]:
+def hold_direction_func(holdness: float, prev_dir: Direction) -> Callable[[World, Position, Direction, float], float]:
     def hold_direction(_: World, __: Position, direction: Direction, weight: float) -> float:
-        return weight if prev_dir.get() == direction.get() else var_chance * weight
+        return weight if prev_dir.get() == direction.get() else holdness * weight
     return hold_direction
 
 
@@ -38,10 +38,10 @@ class WanderPheromoneBehaviour(Behaviour):
     DEFAULT_WOBBLE_CHANCE: float = 0.35
 
 
-    def __init__(self, pheromone_bias: float = 0, variation_chance: float = DEFAULT_VARIATION_CHANCE,
+    def __init__(self, pheromone_bias: float = 0, hold_chance: float = DEFAULT_VARIATION_CHANCE,
                  wobble_chance: float = DEFAULT_WOBBLE_CHANCE):
         self.pheromone_bias: float = pheromone_bias
-        self.variation_chance: float = variation_chance
+        self.hold_chance: float = hold_chance
         self.wobble_chance: float = wobble_chance
         self.facing: Direction = Direction(random.choice(array([-1, 0, -1])), random.choice(array([-1, 0, -1])))
 
@@ -49,7 +49,7 @@ class WanderPheromoneBehaviour(Behaviour):
     def update_attributes(self, pheromone_bias: float = None, variation_chance: float = None,
                  wobble_chance: float = None):
         self.pheromone_bias = pheromone_bias if pheromone_bias is not None else self.pheromone_bias
-        self.variation_chance = variation_chance if variation_chance is not None else self.variation_chance
+        self.hold_chance = variation_chance if variation_chance is not None else self.hold_chance
         self.wobble_chance = wobble_chance if wobble_chance is not None else self.wobble_chance
 
 
@@ -60,7 +60,7 @@ class WanderPheromoneBehaviour(Behaviour):
             directions: Directions = Directions(world, position)
 
             # Bias the direction in terms of the previous chosen direction.
-            directions.bias(hold_direction_func(self.variation_chance, self.facing))
+            directions.bias(hold_direction_func(self.hold_chance, self.facing))
 
             # Bias the direction weights, by pheromone level (with respect to the bias amount).
             directions.bias(pheromone_bias_func(self.pheromone_bias))

@@ -1,5 +1,5 @@
 from ant_simulation.behaviours.behaviour import Behaviour
-from ant_simulation.behaviours.wander_behaviour import WanderBehaviour
+from deprecated.wander_behaviour import WanderBehaviour
 from architecture.actor import Actor
 from architecture.kinds import Kind
 from architecture.location import Location

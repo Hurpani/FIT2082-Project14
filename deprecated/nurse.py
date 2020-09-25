@@ -1,23 +1,24 @@
-from ant_simulation.actors.ant import Ant
+from deprecated.ant import Ant
 from architecture.actor import Actor
 from architecture.kinds import Kind
 from architecture.rendering.colour import Colour
 
-class Forager(Ant):
-    ID: str = "Forager"
-    COLOUR: Colour = Colour(255,128,0)
+
+class Nurse(Ant):
+    ID: str = "Nurse"
+    COLOUR: Colour = Colour(0, 0, 205)
 
     @staticmethod
     def create(kinds: [Kind] = []) -> Actor:
-        return Forager(kinds)
+        return Nurse(kinds)
 
     @staticmethod
     def get_id() -> str:
-        return Forager.ID
+        return Nurse.ID
 
     @staticmethod
     def get_colour() -> Colour:
-        return Forager.COLOUR
+        return Nurse.COLOUR
 
     def __init__(self, kinds: [Kind]):
         super().__init__(kinds)

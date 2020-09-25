@@ -1,0 +1,3 @@
+mant 49 7 [("holdness",0.8),("bias",0),("wobble",0.3),("age",5)]
+mant 50 1 [("age", 20)]
+mant 51 19 [("age", 53)]

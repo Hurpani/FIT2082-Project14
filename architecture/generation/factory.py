@@ -1,5 +1,6 @@
 from typing import Callable, Dict, List
 from architecture.actor import Actor
+from architecture.attributes import Attributes
 from architecture.ground import Ground
 from architecture.object import Object
 from architecture.exceptions.invalid_id import InvalidIdException
@@ -15,7 +16,7 @@ _ground_constructors: Dict[str, Callable[[List[Kind]], Ground]] = {}
 _object_constructors: Dict[str, Callable[[List[Kind]], Object]] = {}
 
 
-def register_actor(id: str, constructor: Callable[[List[Kind]], Actor]):
+def register_actor(id: str, constructor: Callable[[Attributes, List[Kind]], Actor]):
     """\
 Registers an Actor's constructor against an id for generation.
     """
@@ -33,12 +34,12 @@ def register_object(id: str, constructor: Callable[[List[Kind]], Object]):
     _register(id, constructor, _object_constructors)
 
 
-def make_actor(id: str, *args) -> Actor:
+def make_actor(id: str, attributes: Attributes, *args) -> Actor:
     """\
 Creates a new instance of the Actor class based on the provided string
     identifier.
     """
-    return _make(id, _actor_constructors, *args)
+    return _make(id, _actor_constructors, attributes, *args)
 
 
 def make_ground(id: str, *args) -> Ground:

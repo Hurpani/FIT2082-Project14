@@ -4,6 +4,8 @@ from typing import TYPE_CHECKING
 ##############################
 
 from abc import abstractmethod
+
+from architecture.attributes import Attributes
 from architecture.kinds import Kind
 from architecture.position import Position
 from architecture.rendering.renderable import Renderable
@@ -19,7 +21,7 @@ A moving, reacting object participating in the simulation.
     """
 
     @staticmethod
-    def create(kinds: [Kind] = []) -> Actor:
+    def create(attributes: Attributes = None, kinds: [Kind] = []) -> Actor:
         pass
 
 
