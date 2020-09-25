@@ -45,7 +45,7 @@ class ModularAnt(Actor):
     :type a2: ModularAnt
         """
         SIMILARITY_THRESHOLD: float = 1
-        return Direction.similarity(a1.get_facing(), a2.get_facing().reversed()) <= SIMILARITY_THRESHOLD
+        return -1 * SIMILARITY_THRESHOLD <= Direction.similarity(a1.get_facing(), a2.get_facing().reversed()) <= SIMILARITY_THRESHOLD
 
 
     @staticmethod
