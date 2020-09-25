@@ -1,5 +1,7 @@
 ##############################
 from __future__ import annotations
+
+import math
 from typing import Callable
 ##############################
 from architecture.exceptions.invalid_location import InvalidLocationException
@@ -8,9 +10,6 @@ from numpy import random, array
 from architecture.world import World
 from architecture.location import Location
 from architecture.position import Position
-
-# FIXME: Wobbling seems to allow for the ant to move through 1-thick walls... seems like the rotation needs to be
-#  rounded-off better.
 
 ########################################################################################################################
 # These functions and classes are concerned with managing directions.
@@ -40,6 +39,14 @@ class Direction:
 
     def get(self) -> (int, int):
         return self.x, self.y
+
+    def reversed(self) -> Direction:
+        return Direction(-1 * self.x, -1 * self.y)
+
+    @staticmethod
+    def similarity(d1: Direction, d2: Direction) -> float:
+        dif: (float, float) = (d1.get()[0] - d2.get()[0], d1.get()[1] - d2.get()[1])
+        return math.sqrt((dif[0] * dif[0]) + (dif[1] * dif[1]))
 
 
 class Directions:

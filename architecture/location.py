@@ -27,6 +27,7 @@ The Location class. Manages a location in a map.
     MIN_COLOUR_VAL: int = 50
     PHEROMONE_DETERIORATION_CHANCE: float = 0.01
     PHEROMONE_COUNT_CAP: int = 100;
+    PHEROMONE_COLOUR: Colour = Colour(90, 127, 0)
 
     def __init__(self, ground: Ground):
         self.ground: Ground = ground     # 1..1
@@ -43,6 +44,10 @@ The Location class. Manages a location in a map.
     def get_pheromone_count(self):
         return self.pheromones
 
+
+    def get_pheromone_colour(self) -> Colour:
+        return Location.PHEROMONE_COLOUR.get_alt_blue(int(Colour.MAX_VALUE * (float(self.get_pheromone_count())/
+                                                                              Location.PHEROMONE_COUNT_CAP)))
 
     def tick(self, world: World, elapsed: float, position: Position) -> (Actor, Location, Position):
         for obj in self.objects:
@@ -61,6 +66,8 @@ The Location class. Manages a location in a map.
     def get_colour(self, world_state: WorldState, *object_kinds: [Kind]) -> Colour:
         if self.actor is not None:
             return self.actor.get_colour()
+        elif len(object_kinds) == 0 and self.get_pheromone_count() > 0:
+            return self.get_pheromone_colour()
         elif len(self.get_objects(*object_kinds)) > 0:
             return self.get_objects_colour(world_state)
         else:

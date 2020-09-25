@@ -19,6 +19,7 @@ The Plotter class. Responsible for parsing a list of lists of colours, and drawi
     in a grid to the screen.
     """
 
+    @staticmethod
     def draw_world(world: World, *object_kinds: [Kind]):
         """\
     Draws a World in its current state.
