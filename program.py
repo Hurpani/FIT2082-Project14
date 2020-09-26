@@ -28,10 +28,13 @@ if __name__ == "__main__":
     exportDataToEdgeListFile()
 
     def create_and_view_networkx(minimum_show:int = 0):
+
+        #all that is needed to create a networkx Graph
         file = open("edge_list.txt", "rb")
         G = nx.read_edgelist(file)
         file.close()
 
+        #code for edge widths and colours
         for edge in list(G.edges.data()):
             if int(edge[2]['weight']) < minimum_show:
                 G.remove_edge(*edge[:2])
@@ -44,7 +47,12 @@ if __name__ == "__main__":
         for i in range(len(weights)):
             temp_list.append(weights[i] / 5)
 
+        #write pajek file
+        nx.write_pajek(G, "test.net")
+
+        #show network to user
         nx.draw_networkx(G, pos=pos, node_size=400, edge_color=weights, edge_cmap=plt.cm.hot, width=temp_list,alpha=0.8)
         plt.show()
+
 
     create_and_view_networkx(0)
