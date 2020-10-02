@@ -39,7 +39,7 @@ def age_bias(bias: float, age: float) -> float:
 Pheromone biasing decays at a rate corresponding to an inverse exponential
     function.
     """
-    AGE_SCALE: float = 100
+    AGE_SCALE: float = 500
     return exp(-1 * age/AGE_SCALE) * bias
 
 
