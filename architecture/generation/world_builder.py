@@ -51,7 +51,7 @@ def __populate_with_objects(world: World, objects_file: str) -> World:
     return world
 
 
-def create_world(grounds_file: str, actors_file: str, objects_file: str) -> World:
+def create_world(grounds_file: str, actors_file: str = None, objects_file: str = None) -> World:
     return __populate_with_objects(__populate_with_actors(
         __generate_with_grounds(grounds_file), actors_file), objects_file)
 

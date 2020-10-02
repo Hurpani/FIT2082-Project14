@@ -1,6 +1,6 @@
 ##############################
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Union
 ##############################
 
 from abc import ABC
@@ -25,13 +25,13 @@ The Location class. Manages a location in a map.
 
     DEFAULT_OBJECTS_BASE_COLOUR: Colour = Colour(1, 0, 0)
     MIN_COLOUR_VAL: int = 50
-    PHEROMONE_DETERIORATION_CHANCE: float = 0.01
-    PHEROMONE_COUNT_CAP: int = 100;
+    PHEROMONE_DETERIORATION_CHANCE: float = 0.05
+    PHEROMONE_COUNT_CAP: int = 20;
     PHEROMONE_COLOUR: Colour = Colour(90, 127, 0)
 
     def __init__(self, ground: Ground):
         self.ground: Ground = ground     # 1..1
-        self.actor: Actor = None         # 0..1
+        self.actor: Union[Actor, None] = None         # 0..1
         self.objects: [Object] = []      # 0..*
         self.pheromones: int = 0
 
@@ -59,7 +59,10 @@ The Location class. Manages a location in a map.
 
 
     def get_objects_colour(self, world_state: WorldState) -> Colour:
-        return Location.DEFAULT_OBJECTS_BASE_COLOUR.multiply((float(len(self.objects))/world_state.get_max_objects_in_location_count() if world_state.get_max_objects_in_location_count() != 0 else 1) * Colour.MAX_VALUE).\
+        return Location.DEFAULT_OBJECTS_BASE_COLOUR.multiply((
+            float(len(self.objects))/world_state.
+                get_max_objects_in_location_count() if world_state.
+                    get_max_objects_in_location_count() != 0 else 1) * Colour.MAX_VALUE).\
             get_alt_blue(Location.MIN_COLOUR_VAL)
 
 
@@ -104,7 +107,7 @@ The Location class. Manages a location in a map.
         # return ret_list
 
 
-    def get_actor(self) -> Actor:
+    def get_actor(self) -> Union[Actor, None]:
         """\
     Returns the actor at this location.
         """

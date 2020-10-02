@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, Callable
 if TYPE_CHECKING:
     from ant_simulation.actors.modular_ant import ModularAnt
 
-from numpy import random, array
+from numpy import random, array, exp
 from ant_simulation.behaviours.direction_management import Direction, Directions
 from architecture.world import World
 from ant_simulation.behaviours.behaviour import Behaviour
@@ -29,8 +29,18 @@ def pheromone_bias_func(bias: float) -> Callable[[World, Position, Direction, fl
 
 def hold_direction_func(holdness: float, prev_dir: Direction) -> Callable[[World, Position, Direction, float], float]:
     def hold_direction(_: World, __: Position, direction: Direction, weight: float) -> float:
-        return weight if prev_dir.get() == direction.get() else holdness * weight
+        return Direction.similarity_score(prev_dir, direction) * holdness * weight
+        # return weight if prev_dir.get() != direction.get() else holdness * weight
     return hold_direction
+
+
+def age_bias(bias: float, age: float) -> float:
+    """\
+Pheromone biasing decays at a rate corresponding to an inverse exponential
+    function.
+    """
+    AGE_SCALE: float = 100
+    return exp(-1 * age/AGE_SCALE) * bias
 
 
 class WanderPheromoneBehaviour(Behaviour):
@@ -44,6 +54,11 @@ class WanderPheromoneBehaviour(Behaviour):
         self.hold_chance: float = hold_chance
         self.wobble_chance: float = wobble_chance
         self.facing: Direction = Direction(random.choice(array([-1, 0, -1])), random.choice(array([-1, 0, -1])))
+        self.age: float = 0
+
+
+    def set_age(self, _age: float):
+        self.age = _age
 
 
     def update_attributes(self, pheromone_bias: float = None, variation_chance: float = None,
@@ -63,7 +78,7 @@ class WanderPheromoneBehaviour(Behaviour):
             directions.bias(hold_direction_func(self.hold_chance, self.facing))
 
             # Bias the direction weights, by pheromone level (with respect to the bias amount).
-            directions.bias(pheromone_bias_func(self.pheromone_bias))
+            directions.bias(pheromone_bias_func(age_bias(self.pheromone_bias, self.age)))
 
             # Make a random, weighted selection of these direction.
             self.facing = directions.get_random_direction()

@@ -18,7 +18,7 @@ class ModularAnt(Actor):
     ID: str = "mant"
     HOLD_POSITION_CHANCE: float = 0.2
     PHEROMONES_PER_TICK: int = 10
-    INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.025, 0.2, 0.3
+    INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.1, 10, 0.3
     INTERACTION_RADIUS: int = 2
 
     # Indicates the largest ModularAnt id taken so far (-1 if no id has yet been taken).
@@ -45,7 +45,7 @@ class ModularAnt(Actor):
     :type a2: ModularAnt
         """
         SIMILARITY_THRESHOLD: float = 1
-        return -1 * SIMILARITY_THRESHOLD <= Direction.similarity(a1.get_facing(), a2.get_facing().reversed()) <= SIMILARITY_THRESHOLD
+        return -1 * SIMILARITY_THRESHOLD <= Direction.dif_mag(a1.get_facing(), a2.get_facing().reversed()) <= SIMILARITY_THRESHOLD
 
 
     @staticmethod
@@ -61,6 +61,11 @@ class ModularAnt(Actor):
             ModularAnt.interactions[entry] += 1
         else:
             ModularAnt.interactions[entry] = 1
+
+
+    def get_attributes_string(self) -> str:
+        return repr([("age", self.age), ("bias", self.bias), ("holdness", self.holdness),
+                ("wobble", self.wobble), ("hold_position_chance", self.hold_position_chance)])
 
 
     def get_colour(self) -> Colour:

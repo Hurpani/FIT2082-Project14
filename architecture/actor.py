@@ -35,6 +35,14 @@ A moving, reacting object participating in the simulation.
         pass
 
 
+    def get_writeout_string(self, x: int, y: int) -> str:
+        return f"{self.get_id()} {x} {y} {self.get_attributes_string()}"
+
+
+    def get_attributes_string(self) -> str:
+        return ""
+
+
     def add_kind(self, kind: Kind):
         self.kinds.append(kind)
 

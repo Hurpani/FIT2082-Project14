@@ -12,8 +12,12 @@ if __name__ == "__main__":
     registry.register()
 
     world: World = create_world("output.txt", "actors.txt", "empty.txt")
-    for i in range(1):
-        world.run(500)
+    # # # These two lines would restore a world from a previous run. # # #
+    # world: World = create_world("output.txt", "saves/world_save.txt")
+    # world.restore_pheromones()
+    for i in range(20):
+        world.run(1000)
+        world.write_out()
         Plotter.draw_world(world)
-    export_data_to_edge_list_file(ModularAnt.interactions)
-    create_and_view_networkx("edge_list.txt", 0)
+    #export_data_to_edge_list_file(ModularAnt.interactions)
+    #create_and_view_networkx("edge_list.txt", 0)

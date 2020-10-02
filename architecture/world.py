@@ -1,6 +1,8 @@
 ##############################
 from __future__ import annotations
-from typing import TYPE_CHECKING
+
+from typing import TYPE_CHECKING, Union
+
 ##############################
 
 if TYPE_CHECKING:
@@ -8,6 +10,8 @@ if TYPE_CHECKING:
     from architecture.object import Object
     from architecture.kinds import Kind
 
+import ast
+from pathlib import Path
 from architecture.exceptions.invalid_location import InvalidLocationException
 from architecture.world_state import WorldState
 from architecture.location import Location
@@ -20,6 +24,9 @@ The Map class. Manages a piece of terrain for the simulation.
     """
 
     DEFAULT_ITERATIONS: int = 100
+    WRITE_OUT_FILE_PATH = Path("saves/")
+    WRITE_OUT_ACTORS_FILE_NAME: str = "world_save.txt"
+    WRITE_OUT_PHEROMONES_FILE_NAME: str = "pheromones_save.txt"
 
     def __init__(self, width: int, height: int, scale: float = 1.0, delay: float = 1.0):
         """\
@@ -98,6 +105,30 @@ The Map class. Manages a piece of terrain for the simulation.
             for (actor, location, position) in actors:
                 actor.tick(self, self.__delay, location, position)
             count += 1
+
+
+    def restore_pheromones(self):
+        with open((World.WRITE_OUT_FILE_PATH / World.WRITE_OUT_PHEROMONES_FILE_NAME), "r") as file:
+            for line in file.readlines():
+                x, y = line.split()[0], line.split()[1]
+                p = ast.literal_eval(line.split()[2])
+                self.get_location(int(x), int(y)).pheromones = p
+
+
+    def write_out(self):
+        """\
+    Takes a snapshot of as much of the state of actors in this world as possible, and the pheromone counts.
+        """
+        with open((World.WRITE_OUT_FILE_PATH / World.WRITE_OUT_ACTORS_FILE_NAME), "w+") as file:
+            for x in range(self.__width):
+                for y in range(self.__height):
+                    actor: Union[Actor, None] = self.get_location(x, y).get_actor()
+                    if actor is not None:
+                        file.write(actor.get_writeout_string(x, y) + "\n")
+        with open((World.WRITE_OUT_FILE_PATH / World.WRITE_OUT_PHEROMONES_FILE_NAME), "w+") as file:
+            for x in range(self.__width):
+                for y in range(self.__height):
+                    file.write(f"{x} {y} {self.get_location(x, y).get_pheromone_count()}\n")
 
 
     @staticmethod

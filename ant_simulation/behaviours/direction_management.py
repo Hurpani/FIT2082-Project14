@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import math
-from typing import Callable
+from typing import Callable, Dict, List
 ##############################
 from architecture.exceptions.invalid_location import InvalidLocationException
 
@@ -44,7 +44,12 @@ class Direction:
         return Direction(-1 * self.x, -1 * self.y)
 
     @staticmethod
-    def similarity(d1: Direction, d2: Direction) -> float:
+    def similarity_score(d1: Direction, d2: Direction) -> float:
+        OFFSET: float = 1
+        return 1/(OFFSET + Direction.dif_mag(d1, d2))
+
+    @staticmethod
+    def dif_mag(d1: Direction, d2: Direction) -> float:
         dif: (float, float) = (d1.get()[0] - d2.get()[0], d1.get()[1] - d2.get()[1])
         return math.sqrt((dif[0] * dif[0]) + (dif[1] * dif[1]))
 
@@ -55,21 +60,47 @@ The Directions class manages pairs of possible movement directions, and associat
     weights.
     """
 
-    def __init__(self, world: World, position: Position):
-        self.world: World = world
-        self.position: Position = position
-        self.directions: [(Direction, float)] = []
+    ####################################################################################################################
+    # Space < Time
+    ####################################################################################################################
+    compiled_positions: Dict[World, Dict[(int, int), List[(Direction, float)]]] = {}
+
+    @staticmethod
+    def get_weighted_directions(world: World, x: int, y: int) -> [(Direction, float)]:
+        directions: [(Directions, float)] = []
         for i in range(-1, 2):
             for j in range(-1, 2):
                 if i == j:
                     continue
                 weight: float
                 try:
-                    loc: Location = world.get_location(position.x + i, position.y + j)
+                    loc: Location = world.get_location(x + i, y + j)
                     weight = 1 if loc.is_free() else 0
                 except (IndexError, InvalidLocationException):
                     weight = 0
-                self.directions.append((Direction(i, j), weight))
+                directions.append((Direction(i, j), weight))
+        return directions
+
+    @staticmethod
+    def get_baked(world: World, position: Position) -> [(Direction, float)]:
+        if world not in Directions.compiled_positions:
+            Directions.compiled_positions[world] = {}
+            for i in range(world.get_dimensions()[0]):
+                for j in range(world.get_dimensions()[1]):
+                    Directions.compiled_positions[world][(i, j)] = Directions.get_weighted_directions(world, i, j)
+        return Directions.compiled_positions[world][(position.x, position.y)].copy()
+    ####################################################################################################################
+
+
+
+    def __init__(self, world: World, position: Position, use_baked_data: bool = True):
+        self.world: World = world
+        self.position: Position = position
+        self.directions: [(Direction, float)] = []
+        if use_baked_data:
+            self.directions = Directions.get_baked(world, position)
+        else:
+            self.directions = Directions.get_weighted_directions(world, position.x, position.y)
 
 
     def bias(self, func: Callable[[World, Position, Direction, float], float]):
