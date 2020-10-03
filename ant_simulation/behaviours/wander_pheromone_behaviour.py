@@ -14,6 +14,15 @@ from architecture.location import Location
 from architecture.position import Position
 
 
+def age_bias(bias: float, age: float) -> float:
+    """\
+Pheromone biasing decays at a rate corresponding to an inverse exponential
+    function.
+    """
+    AGE_SCALE: float = 500
+    return exp(-1 * age/AGE_SCALE) * bias
+
+
 ########################################################################################################################
 # The behaviour code.                                                                                                  #
 ########################################################################################################################
@@ -32,15 +41,6 @@ def hold_direction_func(holdness: float, prev_dir: Direction) -> Callable[[World
         return Direction.similarity_score(prev_dir, direction) * holdness * weight
         # return weight if prev_dir.get() != direction.get() else holdness * weight
     return hold_direction
-
-
-def age_bias(bias: float, age: float) -> float:
-    """\
-Pheromone biasing decays at a rate corresponding to an inverse exponential
-    function.
-    """
-    AGE_SCALE: float = 500
-    return exp(-1 * age/AGE_SCALE) * bias
 
 
 class WanderPheromoneBehaviour(Behaviour):

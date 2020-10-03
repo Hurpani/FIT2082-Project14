@@ -20,12 +20,25 @@ class ModularAnt(Actor):
     PHEROMONES_PER_TICK: int = 10
     INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.1, 10, 0.3
     INTERACTION_RADIUS: int = 2
+    INTERACTIONS_FILE_NAME: str = "interactions.txt"
 
     # Indicates the largest ModularAnt id taken so far (-1 if no id has yet been taken).
     max_ant_id: int = -1
 
     # Interactions dictionary:
     interactions = {}
+
+
+    @staticmethod
+    def save_interactions():
+        with open((World.WRITE_OUT_FILE_PATH / ModularAnt.INTERACTIONS_FILE_NAME), "w+") as file:
+            file.write(str(ModularAnt.interactions))
+
+
+    @staticmethod
+    def load_interactions():
+        with open((World.WRITE_OUT_FILE_PATH / ModularAnt.INTERACTIONS_FILE_NAME), "r") as file:
+            ModularAnt.interactions = eval(file.read())
 
 
     @staticmethod
@@ -81,6 +94,7 @@ class ModularAnt(Actor):
 
     def tick(self, world: World, elapsed: float, location: Location, position: Position):
         self.age += elapsed
+        self.current_wander_behaviour.set_age(self.age)
 
         if random.random() > self.hold_position_chance:
             self.current_wander_behaviour.do(world, elapsed, location, position, self)
