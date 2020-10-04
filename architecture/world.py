@@ -10,7 +10,6 @@ if TYPE_CHECKING:
     from architecture.object import Object
     from architecture.kinds import Kind
 
-import ast
 from pathlib import Path
 from architecture.exceptions.invalid_location import InvalidLocationException
 from architecture.world_state import WorldState
@@ -37,7 +36,6 @@ The Map class. Manages a piece of terrain for the simulation.
         @:param height: the number of tiles vertically of this World.
         @:param scale: the real-world dimensions of this World.
         """
-        self.__running: bool = False
         self.__delay: float = delay
 
         self.__width: int = width
@@ -92,10 +90,7 @@ The Map class. Manages a piece of terrain for the simulation.
 
 
     def run(self, iterations: int = DEFAULT_ITERATIONS):
-        self.__running = True
-        count: int = 0
-        # TODO : Make this nicer?
-        while self.__running and count < iterations:
+        for i in range(iterations):
             actors: [(Actor, Location, Position)] = []
             for x in range(self.__width):
                 for y in range(self.__height):
@@ -104,15 +99,15 @@ The Map class. Manages a piece of terrain for the simulation.
                         actors.append(_updatable)
             for (actor, location, position) in actors:
                 actor.tick(self, self.__delay, location, position)
-            count += 1
 
 
     def restore_pheromones(self):
         with open((World.WRITE_OUT_FILE_PATH / World.WRITE_OUT_PHEROMONES_FILE_NAME), "r") as file:
             for line in file.readlines():
                 x, y = line.split()[0], line.split()[1]
-                p = ast.literal_eval(line.split()[2])
-                self.get_location(int(x), int(y)).pheromones = p
+                p, fp, bp = int(line.split()[2]), int(line.split()[3]), int(line.split()[4])
+                loc: Location = self.get_location(int(x), int(y))
+                loc.pheromones, loc.foraging_pheromones, loc.brood_pheromones = p, fp, bp
 
 
     def write_out(self):
@@ -128,7 +123,8 @@ The Map class. Manages a piece of terrain for the simulation.
         with open((World.WRITE_OUT_FILE_PATH / World.WRITE_OUT_PHEROMONES_FILE_NAME), "w+") as file:
             for x in range(self.__width):
                 for y in range(self.__height):
-                    file.write(f"{x} {y} {self.get_location(x, y).get_pheromone_count()}\n")
+                    file.write(f"{x} {y} {self.get_location(x, y).get_pheromone_count()} \
+{self.get_location(x, y).get_foraging_pheromone_count()} {self.get_location(x, y).get_brood_pheromone_count()}\n")
 
 
     @staticmethod

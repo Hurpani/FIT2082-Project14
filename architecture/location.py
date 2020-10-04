@@ -26,6 +26,7 @@ The Location class. Manages a location in a map.
     DEFAULT_OBJECTS_BASE_COLOUR: Colour = Colour(1, 0, 0)
     MIN_COLOUR_VAL: int = 50
     PHEROMONE_DETERIORATION_CHANCE: float = 0.05
+    COMPLEX_PHEROMONE_DETERIORATION_CHANCE: float = 0.015
     PHEROMONE_COUNT_CAP: int = 20;
     PHEROMONE_COLOUR: Colour = Colour(90, 127, 0)
 
@@ -33,7 +34,13 @@ The Location class. Manages a location in a map.
         self.ground: Ground = ground     # 1..1
         self.actor: Union[Actor, None] = None         # 0..1
         self.objects: [Object] = []      # 0..*
+        # General ant pheromones:
         self.pheromones: int = 0
+        # More complex pheromones:
+            # For carrying food.
+        self.foraging_pheromones: int = 0
+            # For staying near the nest.
+        self.brood_pheromones: int = 0
 
 
     def add_pheromones(self, num: int):
@@ -45,16 +52,41 @@ The Location class. Manages a location in a map.
         return self.pheromones
 
 
+    def add_foraging_pheromones(self, num: int):
+        if self.foraging_pheromones < Location.PHEROMONE_COUNT_CAP:
+            self.foraging_pheromones += num
+
+
+    def get_foraging_pheromone_count(self):
+        return self.foraging_pheromones
+
+
+    def add_brood_pheromones(self, num: int):
+        if self.brood_pheromones < Location.PHEROMONE_COUNT_CAP:
+            self.brood_pheromones += num
+
+
+    def get_brood_pheromone_count(self):
+        return self.brood_pheromones
+
+
     def get_pheromone_colour(self) -> Colour:
-        return Location.PHEROMONE_COLOUR.get_alt_blue(int(Colour.MAX_VALUE * (float(self.get_pheromone_count())/
+        return Location.PHEROMONE_COLOUR.get_alt_blue(int(Colour.MAX_VALUE * (float(self.get_pheromone_count()) /
+                                                                              Location.PHEROMONE_COUNT_CAP))).\
+                                get_alt_red(int(Colour.MAX_VALUE * (float(self.get_foraging_pheromone_count()) /
                                                                               Location.PHEROMONE_COUNT_CAP)))
 
     def tick(self, world: World, elapsed: float, position: Position) -> (Actor, Location, Position):
         for obj in self.objects:
             obj.tick(world, elapsed, self, position)
-        if random.random() < Location.PHEROMONE_DETERIORATION_CHANCE and self.pheromones > 0:
+        if self.get_ground().is_passable():
             # TODO: Fix this to be in terms of elapsed time (eg. with binomial distribution for probability).
-            self.pheromones -= 1
+            if random.random() < Location.PHEROMONE_DETERIORATION_CHANCE and self.pheromones > 0:
+                self.pheromones -= 1
+            if random.random() < Location.COMPLEX_PHEROMONE_DETERIORATION_CHANCE and self.foraging_pheromones > 0:
+                self.foraging_pheromones -= 1
+            if random.random() < Location.COMPLEX_PHEROMONE_DETERIORATION_CHANCE and self.brood_pheromones > 0:
+                self.brood_pheromones -= 1
         return self.actor, self, position
 
 
