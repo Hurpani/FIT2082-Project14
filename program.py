@@ -19,7 +19,7 @@ if __name__ == "__main__":
     #     Plotter.draw_world(world)
 
     # Continue from where we left off.
-    world: World = load("output.txt", "world_save.txt")
+    world: World = load("output.txt", "world_save.txt", "world_objects.txt")
     for i in range(20):
         world.run(1000)
         save(world)

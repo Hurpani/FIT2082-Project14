@@ -4,18 +4,18 @@ from typing import TYPE_CHECKING
 ##############################
 
 from abc import abstractmethod
-
 from architecture.attributes import Attributes
 from architecture.kinds import Kind
 from architecture.position import Position
 from architecture.rendering.renderable import Renderable
+from architecture.writeable import Writeable
 
 if TYPE_CHECKING:
     from architecture.location import Location
     from architecture.world import World
 
 
-class Actor(Renderable):
+class Actor(Renderable, Writeable):
     """\
 A moving, reacting object participating in the simulation.
     """
