@@ -15,9 +15,10 @@ from architecture.world import World
 class ModularAnt(Actor):
     COLOUR: Colour = Colour(240, 127, 0)
     AGE_COLOURING_PERIOD: float = 200
+    AGE_SCALE: float = 0.05
     ID: str = "mant"
     HOLD_POSITION_CHANCE: float = 0.2
-    PHEROMONES_PER_TICK: int = 10
+    PHEROMONES_PER_TICK: int = 8
     INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.1, 10, 0.3
     INTERACTION_RADIUS: int = 2
     INTERACTIONS_FILE_NAME: str = "interactions.txt"
@@ -93,7 +94,7 @@ class ModularAnt(Actor):
 
 
     def tick(self, world: World, elapsed: float, location: Location, position: Position):
-        self.age += elapsed
+        self.age += elapsed * ModularAnt.AGE_SCALE
         self.current_wander_behaviour.set_age(self.age)
 
         if random.random() > self.hold_position_chance:

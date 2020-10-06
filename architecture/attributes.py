@@ -21,4 +21,4 @@ class Attributes:
     Updates an object with this Attributes' attributes and values.
         """
         for key in self.attributes:
-            obj.key = self.attribute_value_pairs[key]
+            setattr(obj, key, self.attribute_value_pairs[key])
