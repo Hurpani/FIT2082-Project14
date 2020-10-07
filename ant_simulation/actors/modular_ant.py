@@ -13,13 +13,13 @@ from architecture.world import World
 
 
 class ModularAnt(Actor):
-    COLOUR: Colour = Colour(240, 127, 0)
+    COLOUR: Colour = Colour(150, 127, 0)
     AGE_COLOURING_PERIOD: float = 200
-    AGE_SCALE: float = 0.05
+    AGE_SCALE: float = 0.0001 # ages are being input in days, and each tick represents some seconds, so ~1/10000 scale.
     ID: str = "mant"
     HOLD_POSITION_CHANCE: float = 0.2
     PHEROMONES_PER_TICK: int = 8
-    INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.1, 10, 0.3
+    INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.2, 10, 0.3
     INTERACTION_RADIUS: int = 2
     INTERACTIONS_FILE_NAME: str = "interactions.txt"
 
@@ -121,6 +121,8 @@ class ModularAnt(Actor):
 
 
     def __init__(self, attributes: Union[Attributes, None], kinds: [Kind]):
+        if Kind.ANT not in kinds:
+            kinds.append(Kind.ANT)
         super().__init__(kinds)
 
         # AI attributes.
