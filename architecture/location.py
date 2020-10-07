@@ -53,7 +53,7 @@ The Location class. Manages a location in a map.
 
 
     def add_foraging_pheromones(self, num: int):
-        if self.foraging_pheromones < Location.PHEROMONE_COUNT_CAP:
+        if self.foraging_pheromones < Location.PHEROMONE_COUNT_CAP and self.get_ground().is_passable():
             self.foraging_pheromones += num
 
 
