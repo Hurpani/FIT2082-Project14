@@ -1,8 +1,8 @@
-brood 52 3
-brood 53 3
 brood 53 5
 brood 54 6
+brood 56 4
+brood 53 3
 brood 55 7
 brood 55 8
-brood 56 4
 brood 59 4
+brood 52 3

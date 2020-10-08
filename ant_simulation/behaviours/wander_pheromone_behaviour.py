@@ -19,13 +19,29 @@ def age_bias(bias: float, age: float) -> float:
 Pheromone biasing decays at a rate corresponding to an inverse exponential
     function.
     """
-    AGE_SCALE: float = 500
+    AGE_SCALE: float = 50
     return exp(-1 * age/AGE_SCALE) * bias
 
 
 ########################################################################################################################
 # The behaviour code.                                                                                                  #
 ########################################################################################################################
+def brood_pheromone_bias_func(age: float) -> Callable[[World, Position, Direction, float], float]:
+    def brood_bias(age: float) -> float:
+        #A, B, C, D, E = 3, 1.65, 0.07, -4.8, 2.33  # yields a function which decays quickly around the mean cleaner age.
+        #return (A + B*(age - D)/E)*exp(-C*(age - D)/E)
+        if age < 160:
+            return (3 + 1.65 * (age + 4.8) / 2.33) * exp(-0.07 * (age + 4.8) / 2.33)
+        return 0
+
+    def brood_pheromone_bias(world: World, position: Position, direction: Direction, weight: float) -> float:
+        try:
+            loc: Location = world.get_location(position.x + direction.get()[0], position.y + direction.get()[1])
+            return weight + (brood_bias(age) * loc.get_pheromone_count() if loc.is_free() and weight != 0 else 0)
+        except IndexError:
+            return 0
+    return brood_pheromone_bias
+
 def pheromone_bias_func(bias: float) -> Callable[[World, Position, Direction, float], float]:
     def pheromone_bias(world: World, position: Position, direction: Direction, weight: float) -> float:
         try:
@@ -79,6 +95,9 @@ class WanderPheromoneBehaviour(Behaviour):
 
             # Bias the direction weights, by pheromone level (with respect to the bias amount).
             directions.bias(pheromone_bias_func(age_bias(self.pheromone_bias, self.age)))
+
+            # Bias by brood pheromones, encouraging ants to adopt a nurse role.
+            directions.bias(brood_pheromone_bias_func(self.age))
 
             # Make a random, weighted selection of these direction.
             self.facing = directions.get_random_direction()
