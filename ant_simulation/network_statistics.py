@@ -54,8 +54,8 @@ def degree_distribution(G):
     plt.ylabel("amount of nodes with that degree")
     plt.show()
 
-def eccentricity_l(G):
-    G = remove_edge_weights_less_than(G,5)
+def eccentricity_l(G,min_weight=0):
+    G = remove_edge_weights_less_than(G,min_weight)
     counter = [1]
     diameter_list = [0]
 
@@ -78,15 +78,16 @@ if __name__ == "__main__":
     #    file.write(str(line[0]) + "," + str(line[1])+"," + str(line[2])+"\n")
     #file.close()
     file = open("C:/Users/Desktop/FIT2082/FIT2082-Project14/edge_list.txt", "rb")
-    G = nx.read_edgelist(file)
-    community_size_ratio(G)
+    F = nx.read_edgelist(file)
+    community_size_ratio(F)
     print("you need a connected graph")
-    degree_distribution(G)
-    eccentricity_l(G)
+    degree_distribution(F)
+    eccentricity_l(F)
     file.close()
 
     G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day" + "1" + ".graphml")
     community_size_ratio(G)
     degree_distribution(G)
     eccentricity_l(G)
+    print(nx.algorithms.similarity.graph_edit_distance(G,F))
 
