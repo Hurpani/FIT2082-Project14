@@ -9,6 +9,13 @@ def export_data_to_edge_list_file(dct: {}):
         file.write(str(item[0]) + " " + str(item[1]) + " {'weight':" + str(dct[item]) + "}\n")
     file.close()
 
+def community_size_networkx(input_file: str, amount_of_community:int = 3):
+    file = open(input_file, "rb")
+    G = nx.read_edgelist(file)
+    file.close()
+    for community in (nx.algorithms.community.asyn_fluid.asyn_fluidc(G,3)):
+        print(len(community))
+
 def create_and_view_networkx(input_file: str, minimum_show: int = 0):
     # all that is needed to create a networkx Graph
     file = open(input_file, "rb")
@@ -21,12 +28,13 @@ def create_and_view_networkx(input_file: str, minimum_show: int = 0):
             G.remove_edge(*edge[:2])
 
     pos = nx.fruchterman_reingold_layout(G)
-    for x in [x for x in G.nodes() if G.degree(x) == 0]:
-        G.remove_node(x)
+
+    G.remove_nodes_from(list(nx.isolates(G)))
+
     temp_list = []
     edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
     for i in range(len(weights)):
-        temp_list.append(weights[i] / 5)
+        temp_list.append(weights[i]**0.5)
 
     # write pajek file
     nx.write_pajek(G, "test.net")
