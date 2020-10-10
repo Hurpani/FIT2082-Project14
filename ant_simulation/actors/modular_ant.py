@@ -19,6 +19,7 @@ class ModularAnt(Actor):
     ID: str = "mant"
     HOLD_POSITION_CHANCE: float = 0.2
     PHEROMONES_PER_TICK: int = 8
+    FORAGING_PHEROMONE_AGE: int = 130
     INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.2, 10, 0.3
     INTERACTION_RADIUS: int = 2
     INTERACTIONS_FILE_NAME: str = "interactions.txt"
@@ -100,7 +101,10 @@ class ModularAnt(Actor):
         if random.random() > self.hold_position_chance:
             self.current_wander_behaviour.do(world, elapsed, location, position, self)
 
-        location.add_pheromones(ModularAnt.PHEROMONES_PER_TICK)
+        if self.age < ModularAnt.FORAGING_PHEROMONE_AGE:
+            location.add_pheromones(ModularAnt.PHEROMONES_PER_TICK)
+        else:
+            location.add_foraging_pheromones(ModularAnt.PHEROMONES_PER_TICK)
 
         # Measure interactions:
         for loc in world.get_adjacent_locations(position.x, position.y, ModularAnt.INTERACTION_RADIUS, False):

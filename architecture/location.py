@@ -44,7 +44,7 @@ The Location class. Manages a location in a map.
 
 
     def add_pheromones(self, num: int):
-        if self.pheromones < Location.PHEROMONE_COUNT_CAP:
+        if self.pheromones < Location.PHEROMONE_COUNT_CAP and self.get_ground().is_passable():
             self.pheromones += num
 
 
@@ -62,7 +62,7 @@ The Location class. Manages a location in a map.
 
 
     def add_brood_pheromones(self, num: int):
-        if self.brood_pheromones < Location.PHEROMONE_COUNT_CAP:
+        if self.brood_pheromones < Location.PHEROMONE_COUNT_CAP and self.get_ground().is_passable():
             self.brood_pheromones += num
 
 

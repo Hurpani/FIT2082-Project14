@@ -6,12 +6,14 @@ from typing import TYPE_CHECKING, Callable
 if TYPE_CHECKING:
     from ant_simulation.actors.modular_ant import ModularAnt
 
-from numpy import random, array, exp
+from numpy import random, array, exp, tanh
 from ant_simulation.behaviours.direction_management import Direction, Directions
 from architecture.world import World
 from ant_simulation.behaviours.behaviour import Behaviour
 from architecture.location import Location
 from architecture.position import Position
+
+FORAGING_PHEROMONE_THRESHOLD: int = 3
 
 
 def age_bias(bias: float, age: float) -> float:
@@ -59,6 +61,19 @@ def hold_direction_func(holdness: float, prev_dir: Direction) -> Callable[[World
     return hold_direction
 
 
+def exploration_bias_func(age: float) -> Callable[[World, Position, Direction, float], float]:
+    def exploration_bias(world: World, position: Position, direction: Direction, weight: float) -> float:
+        try:
+            loc: Location = world.get_location(position.x + direction.get()[0], position.y + direction.get()[1])
+            return weight * (tanh((age - 130) / 10) + 2
+                                        ) if (loc.get_pheromone_count() <= FORAGING_PHEROMONE_THRESHOLD and
+                                        loc.get_brood_pheromone_count() <= FORAGING_PHEROMONE_THRESHOLD) or \
+                                        loc.get_foraging_pheromone_count() > FORAGING_PHEROMONE_THRESHOLD else weight
+        except IndexError:
+            return 0
+    return exploration_bias
+
+
 class WanderPheromoneBehaviour(Behaviour):
     DEFAULT_VARIATION_CHANCE: float = 0.1
     DEFAULT_WOBBLE_CHANCE: float = 0.35
@@ -98,6 +113,9 @@ class WanderPheromoneBehaviour(Behaviour):
 
             # Bias by brood pheromones, encouraging ants to adopt a nurse role.
             directions.bias(brood_pheromone_bias_func(self.age))
+
+            # Bias by forager pheromones, and against other pheromones based on age.
+            directions.bias(exploration_bias_func(self.age))
 
             # Make a random, weighted selection of these direction.
             self.facing = directions.get_random_direction()
