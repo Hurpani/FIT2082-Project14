@@ -7,6 +7,7 @@ def remove_edge_weights_less_than(G, amount:int = 0):
     for edge in list(G.edges.data()):
         if int(edge[2]['weight']) < amount:
             G.remove_edge(*edge[:2])
+    G.remove_nodes_from(list(nx.isolates(G)))
     return G
 
 def community_size_networkx(input_file: str, amount_of_community:int = 3):
@@ -54,8 +55,7 @@ def degree_distribution(G):
     plt.ylabel("amount of nodes with that degree")
     plt.show()
 
-def eccentricity_l(G,min_weight=0):
-    G = remove_edge_weights_less_than(G,min_weight)
+def eccentricity_l(G):
     counter = [1]
     diameter_list = [0]
 
@@ -71,23 +71,39 @@ def eccentricity_l(G,min_weight=0):
     plt.ylabel("amount of nodes with that eccentricity")
     plt.show()
 
+def showGraph(G):
+    pos = nx.fruchterman_reingold_layout(G)
+
+    temp_list = []
+    edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
+    for i in range(len(weights)):
+        temp_list.append(weights[i]**0.05)  # **0.5
+
+    # write pajek file
+    nx.write_pajek(G, "test.net")
+
+    # show network to user
+    nx.draw_networkx(G, pos=pos, node_size=50, edge_color=weights, edge_cmap=plt.cm.hot, width=temp_list, alpha=0.8, with_labels=False)
+    plt.show()
 if __name__ == "__main__":
-    #result = community_size_ratio_real_world()
-    #file = open("output.csv","w")
-    #for line in result:
-    #    file.write(str(line[0]) + "," + str(line[1])+"," + str(line[2])+"\n")
-    #file.close()
+
     file = open("C:/Users/Desktop/FIT2082/FIT2082-Project14/edge_list.txt", "rb")
-    F = nx.read_edgelist(file)
-    community_size_ratio(F)
-    print("you need a connected graph")
-    degree_distribution(F)
-    eccentricity_l(F)
+    G = nx.read_edgelist(file)
     file.close()
 
-    G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day" + "1" + ".graphml")
+    remove_edge_weights_less_than(G,800)
     community_size_ratio(G)
     degree_distribution(G)
     eccentricity_l(G)
-    print(nx.algorithms.similarity.graph_edit_distance(G,F))
+    showGraph(G)
+
+
+    G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day" + "30" + ".graphml")
+
+    remove_edge_weights_less_than(G, 20)
+    community_size_ratio(G)
+    degree_distribution(G)
+    eccentricity_l(G)
+    showGraph(G)
+
 
