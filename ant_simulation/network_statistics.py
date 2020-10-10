@@ -42,6 +42,9 @@ def community_size_ratio(G):
     sumlist = sum(List)
     for i in range(len(List)):
         List[i] /= sumlist
+        List[i] *= 100000
+        List[i] = int(List[i])
+        List[i] /= 1000
     print(List)
     return List
 
