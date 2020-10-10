@@ -71,7 +71,7 @@ The Location class. Manages a location in a map.
 
 
     def get_pheromone_colour(self) -> Colour:
-        return Colour(int(Colour.MAX_VALUE * (float(self.get_brood_pheromone_count())/Location.PHEROMONE_COUNT_CAP)),
+        return Colour(int(Colour.MAX_VALUE * (float(self.get_foraging_pheromone_count())/Location.PHEROMONE_COUNT_CAP)),
                       200, 200)
         # return Location.PHEROMONE_COLOUR.get_alt_blue(int(Colour.MAX_VALUE * (float(self.get_pheromone_count()) /
         #                                                                       Location.PHEROMONE_COUNT_CAP))).\
@@ -103,7 +103,7 @@ The Location class. Manages a location in a map.
     def get_colour(self, world_state: WorldState, *object_kinds: [Kind]) -> Colour:
         if self.actor is not None:
             return self.actor.get_colour()
-        elif len(object_kinds) == 0 and self.get_brood_pheromone_count() > 0:   # get_pheromone_count
+        elif len(object_kinds) == 0 and self.get_foraging_pheromone_count() > 0:   # get_pheromone_count
             return self.get_pheromone_colour()
         elif len(self.get_objects(*object_kinds)) > 0:
             return self.get_objects_colour(world_state)

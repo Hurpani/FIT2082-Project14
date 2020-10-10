@@ -11,4 +11,5 @@ def load(grounds_file: str, actors_file: str, objects_file: str = None) -> World
     world: World = create_world(grounds_file, World.WRITE_OUT_FILE_PATH / actors_file,
                                 World.WRITE_OUT_FILE_PATH / objects_file if objects_file is not None else None)
     world.restore_pheromones()
+    ModularAnt.load_interactions()
     return world

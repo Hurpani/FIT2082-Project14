@@ -34,7 +34,7 @@ def create_and_view_networkx(input_file: str, minimum_show: int = 0):
     temp_list = []
     edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
     for i in range(len(weights)):
-        temp_list.append(weights[i]**0.5)
+        temp_list.append(weights[i]**0.05)  # **0.5
 
     # write pajek file
     nx.write_pajek(G, "test.net")
