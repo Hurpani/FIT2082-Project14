@@ -32,13 +32,16 @@ def create_and_view_networkx(input_file: str, minimum_show: int = 0):
     G.remove_nodes_from(list(nx.isolates(G)))
 
     temp_list = []
-    edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
-    for i in range(len(weights)):
-        temp_list.append(weights[i]**0.05)  # **0.5
 
+    if G.number_of_edges() > 0:
+        edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
+        for i in range(len(weights)):
+            temp_list.append(weights[i]**0.05)  # **0.5
+        # show network to user
+        nx.draw_networkx(G, pos=pos, node_size=400, edge_color=weights, edge_cmap=plt.cm.hot, width=temp_list, alpha=0.8)
+    else:
+        nx.draw_networkx(G, pos=pos, node_size=400,alpha=0.8)
     # write pajek file
     nx.write_pajek(G, "test.net")
-
-    # show network to user
-    nx.draw_networkx(G, pos=pos, node_size=400, edge_color=weights, edge_cmap=plt.cm.hot, width=temp_list, alpha=0.8)
     plt.show()
+
