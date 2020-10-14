@@ -142,27 +142,28 @@ def showGraph(G):
     # show network to user
     nx.draw_networkx(G, pos=pos, node_size=50, edge_color=weights, edge_cmap=plt.cm.hot, width=temp_list, alpha=0.8, with_labels=False)
     plt.show()
-if __name__ == "__main__":
-    """
-    #Random
+
+def indivualGraphs():
+    # Random
     colony = 5
     day = 1
-    G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(day) + ".graphml")
+    G = nx.read_graphml(
+        "C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(day) + ".graphml")
     F = create_random_graph_based_off(G)
     Fc = F.subgraph(max(nx.connected_components(F))).copy()
-    remove_edge_weights_less_than(F, 15)
-    Fc = F.subgraph(max(nx.connected_components(F))).copy()
+    remove_edge_weights_less_than(Fc, 700)
+    Fc = Fc.subgraph(max(nx.connected_components(Fc))).copy()
     showGraph(Fc)
     community_size_ratio(Fc)
     degree_distribution(Fc)
     eccentricity_l(Fc)
     clustering_l(Fc)
 
-    #Simulation
+    # Simulation
     file = open("C:/Users/Desktop/FIT2082/FIT2082-Project14/edge_list.txt", "rb")
     G = nx.read_edgelist(file)
     file.close()
-    remove_edge_weights_less_than(G,10)
+    remove_edge_weights_less_than(G, 10)
     G = G.subgraph(max(nx.connected_components(G))).copy()
     showGraph(G)
     community_size_ratio(G)
@@ -170,22 +171,23 @@ if __name__ == "__main__":
     eccentricity_l(G)
     clustering_l(G)
 
-    #real world
+    # real world
     colony = 5
     day = 1
-    G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(day) + ".graphml")
-    remove_edge_weights_less_than(G, 20)
+    G = nx.read_graphml(
+        "C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(day) + ".graphml")
+    remove_edge_weights_less_than(G, 10)
     G = G.subgraph(max(nx.connected_components(G))).copy()
     showGraph(G)
     community_size_ratio(G)
     degree_distribution(G)
     eccentricity_l(G)
     clustering_l(G)
-    """
 
+def lots_of_graphs():
     Simualation_community = [[], [], []]
     Simualation_degree, Simualation_clustering, Simualation_eccentricity = [], [], []
-    list_of_file_names =["C:/Users/Desktop/FIT2082/FIT2082-Project14/edge_list.txt"]
+    list_of_file_names = ["C:/Users/Desktop/FIT2082/FIT2082-Project14/edge_list.txt"]
     for file in list_of_file_names:
         G = nx.read_edgelist(file)
         remove_edge_weights_less_than(G, 700)
@@ -213,21 +215,23 @@ if __name__ == "__main__":
     colony = 5
     Real_community = [[], [], []]
     Real_degree, Real_clustering, Real_eccentricity = [], [], []
-    for day in range(1,42):
+    for day in range(1, 42):
         print("Real " + str(day))
-        G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(day) + ".graphml")
+        G = nx.read_graphml(
+            "C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(
+                day) + ".graphml")
         remove_edge_weights_less_than(G, 10)
         G = G.subgraph(max(nx.connected_components(G))).copy()
         communities = community_size_ratio(G, False)
         Real_community[0].append(communities[0])
         Real_community[1].append(communities[1])
         Real_community[2].append(communities[2])
-        Real_degree.append(sum([d for n, d in G.degree()])/len([d for n, d in G.degree()]))
+        Real_degree.append(sum([d for n, d in G.degree()]) / len([d for n, d in G.degree()]))
         temp = []
         for node in G.nodes():
-            temp.append(nx.eccentricity(G,node))
-        Real_eccentricity.append(sum(temp)/len(temp))
-        Real_clustering.append(nx.average_clustering(G,weight='weight'))
+            temp.append(nx.eccentricity(G, node))
+        Real_eccentricity.append(sum(temp) / len(temp))
+        Real_clustering.append(nx.average_clustering(G, weight='weight'))
     file = open("real.csv", "w+")
     with file:
         write = csv.writer(file)
@@ -237,14 +241,15 @@ if __name__ == "__main__":
         write.writerow(Real_clustering)
     file.close()
 
-
     file = open("random.csv", "w")
     colony = 5
     Random_community = [[], [], []]
     Random_degree, Random_clustering, Random_eccentricity = [], [], []
-    for day in range(1,42):
+    for day in range(1, 42):
         print("Random " + str(day))
-        G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(day) + ".graphml")
+        G = nx.read_graphml(
+            "C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(
+                day) + ".graphml")
         G = create_random_graph_based_off(G)
         remove_edge_weights_less_than(G, 10)
         G = G.subgraph(max(nx.connected_components(G))).copy()
@@ -252,12 +257,12 @@ if __name__ == "__main__":
         Random_community[0].append(communities[0])
         Random_community[1].append(communities[1])
         Random_community[2].append(communities[2])
-        Random_degree.append(sum([d for n, d in G.degree()])/len([d for n, d in G.degree()]))
+        Random_degree.append(sum([d for n, d in G.degree()]) / len([d for n, d in G.degree()]))
         temp = []
         for node in G.nodes():
-            temp.append(nx.eccentricity(G,node))
-        Random_eccentricity.append(sum(temp)/len(temp))
-        Random_clustering.append(nx.average_clustering(G,weight='weight'))
+            temp.append(nx.eccentricity(G, node))
+        Random_eccentricity.append(sum(temp) / len(temp))
+        Random_clustering.append(nx.average_clustering(G, weight='weight'))
     file = open("Random.csv", "w+")
     with file:
         write = csv.writer(file)
@@ -266,4 +271,8 @@ if __name__ == "__main__":
         write.writerow(Random_eccentricity)
         write.writerow(Random_clustering)
     file.close()
+
+if __name__ == "__main__":
+    indivualGraphs()
+
 
