@@ -19,6 +19,7 @@ class Food(Object):
     def get_id() -> str:
         return Food.ID
 
+    @staticmethod
     def create(kinds: [Kind] = []):
         return Food(kinds)
 

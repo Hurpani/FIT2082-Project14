@@ -21,9 +21,9 @@ if __name__ == "__main__":
 
     # Continue from where we left off.
     world: World = load("output.txt", "world_save.txt", "world_objects.txt")
-    for i in range(20):
-        world.run(10000)
+    for i in range(5):
+        world.run(600)
         save(world)
-        Plotter.draw_world(world)#, Kind.BROOD)
+    Plotter.draw_world(world)  # , Kind.BROOD)
     export_data_to_edge_list_file(ModularAnt.interactions)
-    create_and_view_networkx("edge_list.txt", 210)
+    create_and_view_networkx("edge_list.txt", 20)  # 210 # 210*3

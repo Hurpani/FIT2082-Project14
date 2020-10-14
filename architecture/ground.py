@@ -18,7 +18,7 @@ A piece of ground participating in the simulation.
 
 
     @staticmethod
-    def get_id(self) -> str:
+    def get_id() -> str:
         pass
 
 

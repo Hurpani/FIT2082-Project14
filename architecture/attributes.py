@@ -2,7 +2,7 @@ from typing import Union, Dict, Tuple
 
 
 class Attributes:
-    ATTRIBUTE_TYPE: type = Union[float, int, str, Tuple[int, int]]
+    ATTRIBUTE_TYPE: type = Union[float, int, str, Tuple[int, int], bool]
 
     def __init__(self, args: [(str, ATTRIBUTE_TYPE)]):
         self.attribute_value_pairs: Dict[str, Attributes.ATTRIBUTE_TYPE] = {}

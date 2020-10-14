@@ -6,3 +6,7 @@ brood 55 7
 brood 55 8
 brood 59 4
 brood 52 3
+food_generator 13 5
+food_generator 16 4
+food_generator 15 8
+food_generator 19 4

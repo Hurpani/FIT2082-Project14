@@ -1,5 +1,6 @@
 from ant_simulation.actors.modular_queen import ModularQueen
 from ant_simulation.objects.brood import Brood
+from ant_simulation.objects.food_generator import FoodGenerator
 from deprecated.ant import Ant
 from deprecated.behaviour_ant import BehaviourAnt
 from deprecated.cleaner import Cleaner
@@ -36,3 +37,4 @@ def register():
     factory.register_object(Food.get_id(), Food.create)
     factory.register_object(TestObject.get_id(), TestObject.create)
     factory.register_object(Brood.get_id(), Brood.create)
+    factory.register_object(FoodGenerator.get_id(), FoodGenerator.create)
