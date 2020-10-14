@@ -1,19 +1,24 @@
 ##############################
 from __future__ import annotations
+
 from typing import TYPE_CHECKING, Callable
 ##############################
+from ant_simulation.grounds.forage_grounds import ForageGrounds
+from architecture.kinds import Kind
 
 if TYPE_CHECKING:
     from ant_simulation.actors.modular_ant import ModularAnt
-
 from numpy import random, array, exp, tanh
-from ant_simulation.behaviours.direction_management import Direction, Directions
+from ant_simulation.behaviours.direction_management import Direction, Directions, sign
 from architecture.world import World
 from ant_simulation.behaviours.behaviour import Behaviour
 from architecture.location import Location
 from architecture.position import Position
 
 FORAGING_PHEROMONE_THRESHOLD: int = 3
+FOOD_LURE_RADIUS: int = 5
+FORAGING_AGE: int = 130
+FOOD_BIAS_FACTOR: int = 15
 
 
 def age_bias(bias: float, age: float) -> float:
@@ -65,13 +70,41 @@ def exploration_bias_func(age: float) -> Callable[[World, Position, Direction, f
     def exploration_bias(world: World, position: Position, direction: Direction, weight: float) -> float:
         try:
             loc: Location = world.get_location(position.x + direction.get()[0], position.y + direction.get()[1])
-            return weight * (tanh((age - 130) / 10) + 2
+            return weight * (tanh((age - 130) / 10) + 2 # weight * 5 * (tanh((age - 130)/(10)) + 1.2 #
                                         ) if (loc.get_pheromone_count() <= FORAGING_PHEROMONE_THRESHOLD and
                                         loc.get_brood_pheromone_count() <= FORAGING_PHEROMONE_THRESHOLD) or \
                                         loc.get_foraging_pheromone_count() > FORAGING_PHEROMONE_THRESHOLD else weight
         except IndexError:
             return 0
     return exploration_bias
+
+
+def id_func() -> Callable[[World, Position, Direction, float], float]:
+    """\
+The id_func function returns a map which does not alter a weight.
+    """
+    def id_f(world: World, position: Position, direction: Direction, weight: float) -> float:
+        return weight
+    return id_f
+
+def food_lure_func(age: float) -> Callable[[World, Position, Direction, float], float]:
+    """\
+Ants of sufficient age will be enticed by food outside of the nest, whilst ants pick up food, and place
+    it near piles inside of the nest.
+    """
+    def food_lure(world: World, position: Position, direction: Direction, weight: float) -> float:
+        locations: [(Location, int, int)] = world.get_adjacent_locations_with_positions(position.x, position.y,
+                                                                                    FOOD_LURE_RADIUS, True)
+        return weight + sum(
+            map(lambda lxy: FOOD_BIAS_FACTOR * len(lxy[0].get_objects(Kind.FOOD)),
+                filter(lambda lxy: (sign(lxy[1] - position.x) == sign(direction.x) or direction.x == 0) and (
+                                        sign(lxy[2] - position.y) == sign(direction.y) or direction.y == 0),
+                    filter(lambda lxy: lxy[0].get_ground().get_id() == ForageGrounds.get_id(),
+                        locations)
+                )
+            )
+        )
+    return food_lure if age > FORAGING_AGE else id_func()
 
 
 class WanderPheromoneBehaviour(Behaviour):
@@ -86,10 +119,15 @@ class WanderPheromoneBehaviour(Behaviour):
         self.wobble_chance: float = wobble_chance
         self.facing: Direction = Direction(random.choice(array([-1, 0, -1])), random.choice(array([-1, 0, -1])))
         self.age: float = 0
+        self.seeking_food: bool = False
 
 
     def set_age(self, _age: float):
         self.age = _age
+
+
+    def set_seeking_food(self, _seeking_food: bool):
+        self.seeking_food = _seeking_food
 
 
     def update_attributes(self, pheromone_bias: float = None, variation_chance: float = None,
@@ -116,6 +154,10 @@ class WanderPheromoneBehaviour(Behaviour):
 
             # Bias by forager pheromones, and against other pheromones based on age.
             directions.bias(exploration_bias_func(self.age))
+
+            # Bias by food in the foraging area, if the ant is not already carrying food.
+            if self.seeking_food:
+                directions.bias(food_lure_func(self.age))
 
             # Make a random, weighted selection of these direction.
             self.facing = directions.get_random_direction()

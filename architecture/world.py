@@ -90,6 +90,18 @@ The Map class. Manages a piece of terrain for the simulation.
         return  locations
 
 
+    def get_adjacent_locations_with_positions(self, x: int, y: int, r: int = 1, require_free: bool = True) -> [Location]:
+        """\
+    Returns the locations with a Manhattan distance at most r from x,y.
+        """
+        locations: [(Location, int, int)] = []
+        for i in range(max(x - r, 0), min(x + r + 1, self.__width - 1), 1):
+            for j in range(max(y - r, 0), min(y + r + 1, self.__height - 1), 1):
+                if abs(x - i) + abs(y - j) <= r and ((not require_free) or self.get_location(i, j).is_free()):
+                    locations.append((self.get_location(i, j), i, j))
+        return  locations
+
+
     def run(self, iterations: int = DEFAULT_ITERATIONS):
         for i in range(iterations):
             actors: [(Actor, Location, Position)] = []
