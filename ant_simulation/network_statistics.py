@@ -12,14 +12,13 @@ def create_random_graph_based_off(G):
     total_weight = 0
     for edge in list(G.edges.data()):
         total_weight += int(edge[2]['weight'])
-    #assign each edge with a weight of 1 and take that away from the total weight amount
-    total_weight -= F.number_of_edges()
+    #assign each edge with a weight of 1
     for edge in list(F.edges.data()):
         edge[2]['weight'] = 1
 
     #generate a list of edges of a length total_weight with replacment from F.edges, then add a weight to each sample
     print(list(F.edges.data()))
-    edge_list = random.choices(list(F.edges.data()),k=total_weight)
+    edge_list = random.choices(list(F.edges.data()),k=total_weight-F.number_of_edges())
     for edge in edge_list:
         edge[2]['weight'] +=1
 
