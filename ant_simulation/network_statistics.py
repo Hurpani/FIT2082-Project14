@@ -12,22 +12,16 @@ def create_random_graph_based_off(G):
     total_weight = 0
     for edge in list(G.edges.data()):
         total_weight += int(edge[2]['weight'])
-
     #assign each edge with a weight of 1 and take that away from the total weight amount
-    total_weight -= F.number_of_nodes()
+    total_weight -= F.number_of_edges()
     for edge in list(F.edges.data()):
         edge[2]['weight'] = 1
 
-    #loop though edges 1% of the time adding a weight to that edge and de-incrementing total_weight
-    #repeated until no more weights to add
-    while total_weight > 0:
-        for edge in list(F.edges.data()):
-            if total_weight == 0:
-                break
-
-            if random.random() < 0.01:
-                edge[2]['weight'] += 1
-                total_weight -= 1
+    #generate a list of edges of a length total_weight with replacment from F.edges, then add a weight to each sample
+    print(list(F.edges.data()))
+    edge_list = random.choices(list(F.edges.data()),k=total_weight)
+    for edge in edge_list:
+        edge[2]['weight'] +=1
 
     return F
 
@@ -150,8 +144,14 @@ def indivualGraphs():
     G = nx.read_graphml(
         "C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(day) + ".graphml")
     F = create_random_graph_based_off(G)
+
+    total_weight = 0
+    for edge in list(F.edges.data()):
+        total_weight += int(edge[2]['weight'])
+    print(total_weight)
+
     Fc = F.subgraph(max(nx.connected_components(F))).copy()
-    remove_edge_weights_less_than(Fc, 10)
+    remove_edge_weights_less_than(Fc, 15)
     Fc = Fc.subgraph(max(nx.connected_components(Fc))).copy()
     showGraph(Fc)
     community_size_ratio(Fc)
@@ -163,7 +163,13 @@ def indivualGraphs():
     file = open("C:/Users/Desktop/FIT2082/FIT2082-Project14/edge_list.txt", "rb")
     G = nx.read_edgelist(file)
     file.close()
-    remove_edge_weights_less_than(G, 700)
+
+    total_weight = 0
+    for edge in list(G.edges.data()):
+        total_weight += int(edge[2]['weight'])
+    print(total_weight)
+
+    remove_edge_weights_less_than(G, 20)
     G = G.subgraph(max(nx.connected_components(G))).copy()
     showGraph(G)
     community_size_ratio(G)
@@ -176,7 +182,13 @@ def indivualGraphs():
     day = 1
     G = nx.read_graphml(
         "C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(day) + ".graphml")
-    remove_edge_weights_less_than(G, 10)
+
+    total_weight = 0
+    for edge in list(G.edges.data()):
+        total_weight += int(edge[2]['weight'])
+    print(total_weight)
+
+    remove_edge_weights_less_than(G, 20)
     G = G.subgraph(max(nx.connected_components(G))).copy()
     showGraph(G)
     community_size_ratio(G)
