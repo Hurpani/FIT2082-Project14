@@ -88,10 +88,11 @@ class ModularAnt(Actor):
     @staticmethod
     def log_interaction_ids(id1: int, id2: int):
         entry: (int, int) = (min(id1, id2), max(id1, id2))
-        if entry in ModularAnt.interactions:
-            ModularAnt.interactions[entry] += 1
-        else:
-            ModularAnt.interactions[entry] = 1
+        if random.random() > 0.5:
+            if entry in ModularAnt.interactions:
+                ModularAnt.interactions[entry] += 1
+            else:
+                ModularAnt.interactions[entry] = 1
 
 
     def get_attributes_string(self) -> str:
