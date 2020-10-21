@@ -136,12 +136,12 @@ def showGraph(G):
     nx.draw_networkx(G, pos=pos, node_size=50, edge_color=weights, edge_cmap=plt.cm.hot, width=temp_list, alpha=0.8, with_labels=False)
     plt.show()
 
-def indivualGraphs(edge_weight_minimum):
+def indivualGraphs(edge_weight_minimum,real_world_dir):
     # Random
     colony = 5
     day = 1
     G = nx.read_graphml(
-        "C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(day) + ".graphml")
+        real_world_dir + str(colony) + "_day" + str(day) + ".graphml")
     F = create_random_graph_based_off(G)
 
     total_weight = 0
@@ -180,7 +180,7 @@ def indivualGraphs(edge_weight_minimum):
     colony = 5
     day = 1
     G = nx.read_graphml(
-        "C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(day) + ".graphml")
+        real_world_dir + str(colony) + "_day" + str(day) + ".graphml")
 
     total_weight = 0
     for edge in list(G.edges.data()):
@@ -195,7 +195,7 @@ def indivualGraphs(edge_weight_minimum):
     eccentricity_l(G)
     clustering_l(G)
 
-def lots_of_graphs(edge_weight_minimum):
+def lots_of_graphs(edge_weight_minimum,real_world_dir):
     Simualation_community = [[], [], []]
     Simualation_degree, Simualation_clustering, Simualation_eccentricity = [], [], []
     list_of_file_names = ["C:/Users/Desktop/FIT2082/FIT2082-Project14/edge_list.txt"]
@@ -229,7 +229,7 @@ def lots_of_graphs(edge_weight_minimum):
     for day in range(1, 42):
         print("Real " + str(day))
         G = nx.read_graphml(
-            "C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(
+            real_world_dir + str(colony) + "_day" + str(
                 day) + ".graphml")
         remove_edge_weights_less_than(G, edge_weight_minimum)
         G = G.subgraph(max(nx.connected_components(G))).copy()
@@ -259,7 +259,7 @@ def lots_of_graphs(edge_weight_minimum):
     for day in range(1, 42):
         print("Random " + str(day))
         G = nx.read_graphml(
-            "C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col" + str(colony) + "_day" + str(
+            real_world_dir + str(colony) + "_day" + str(
                 day) + ".graphml")
         G = create_random_graph_based_off(G)
         remove_edge_weights_less_than(G, edge_weight_minimum)
@@ -284,6 +284,6 @@ def lots_of_graphs(edge_weight_minimum):
     file.close()
 
 if __name__ == "__main__":
-    indivualGraphs(5)
+    indivualGraphs(15,"C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col")
 
 
