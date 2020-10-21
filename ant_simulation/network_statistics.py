@@ -1,9 +1,10 @@
 import matplotlib.pyplot as plt
 import networkx as nx
 import collections
-import numpy as np
 import random as random
-import csv
+import xlsxwriter
+import datetime
+
 def create_random_graph_based_off(G):
     #create a random graph with same number of nodes and edges
     F = nx.generators.random_graphs.gnm_random_graph(G.number_of_nodes(),G.number_of_edges())
@@ -17,7 +18,7 @@ def create_random_graph_based_off(G):
         edge[2]['weight'] = 1
 
     #generate a list of edges of a length total_weight with replacment from F.edges, then add a weight to each sample
-    print(list(F.edges.data()))
+    #print(list(F.edges.data()))
     edge_list = random.choices(list(F.edges.data()),k=total_weight-F.number_of_edges())
     for edge in edge_list:
         edge[2]['weight'] +=1
@@ -53,12 +54,17 @@ def community_size_ratio_real_world():
         for i in range(len(List)):
             List[i] /= sumlist
         MainList.append(List)
-    print(MainList)
+    #print(MainList)
     return MainList
 
-def community_size_ratio(G,display:bool = True):
+def community_size_ratio(G,display:bool = True,number_of_communities = 3):
+
+    if G.number_of_nodes == 1:
+        return([100,0,0])
+    if nx.number_of_nodes(G) == 2:
+        number_of_communities = 2
     List = []
-    for community in (nx.algorithms.community.asyn_fluid.asyn_fluidc(G,3)):
+    for community in (nx.algorithms.community.asyn_fluid.asyn_fluidc(G,number_of_communities)):
         List.append(len(community))
     List.sort()
     List.reverse()
@@ -74,6 +80,8 @@ def community_size_ratio(G,display:bool = True):
         plt.title("Community Size Comparision ")
         plt.ylabel("percentage of nodes in each community")
         plt.show()
+    if number_of_communities == 2:
+        List.append(0)
     return List
 
 def degree_distribution(G):
@@ -194,7 +202,7 @@ def indivualGraphs(edge_weight_minimum,real_world_dir):
     degree_distribution(G)
     eccentricity_l(G)
     clustering_l(G)
-
+"""
 def lots_of_graphs(edge_weight_minimum,real_world_dir):
     Simualation_community = [[], [], []]
     Simualation_degree, Simualation_clustering, Simualation_eccentricity = [], [], []
@@ -282,8 +290,230 @@ def lots_of_graphs(edge_weight_minimum,real_world_dir):
         write.writerow(Random_eccentricity)
         write.writerow(Random_clustering)
     file.close()
+"""
+
+def weight_distrubution(weight_list):
+    weight_list.sort()
+
+    plt.scatter(range(1,len(weight_list)+1), weight_list, color="b")
+    plt.axhline(y=15, color='r', linestyle='-')
+    plt.title("Weight Distrubtion of Network")
+    plt.xlabel("edge")
+    plt.ylabel("Interaction amount")
+    plt.show()
+
+
+def visualisng_weights():
+    # random
+    G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day1.graphml")
+    weight_list = []
+    for i in range(100):
+        F = create_random_graph_based_off(G)
+        for edge in list(F.edges.data()):
+            weight_list.append(int(edge[2]['weight']))
+    weight_distrubution(weight_list)
+
+    # real
+    weight_list = []
+    G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day1.graphml")
+    for edge in list(G.edges.data()):
+        weight_list.append(int(edge[2]['weight']))
+    weight_distrubution(weight_list)
+
+    # simulated
+    weight_list = []
+    for i in range(1, 21):
+        file = open("C:/Users/Desktop/FIT2082/FIT2082-Project14/saves/Saves_edgelist/" + str(i) + "edge_list.txt", "rb")
+        G = nx.read_edgelist(file)
+        file.close()
+        for edge in list(G.edges.data()):
+            weight_list.append(int(edge[2]['weight']))
+        file.close()
+    weight_distrubution(weight_list)
+
+def sim_statistics(weight_limit,workbook):
+
+    community_list = []
+    degree_list = []
+    eccentricity_list = []
+    clustering_list = []
+    weight_list = []
+
+    for i in range(1,21):
+        file = open("C:/Users/Desktop/FIT2082/FIT2082-Project14/saves/Saves_edgelist/" + str(i) + "edge_list.txt", "rb")
+        G = nx.read_edgelist(file)
+        file.close()
+
+        temp_weight =[]
+        for edge in list(G.edges.data()):
+            temp_weight.append(int(edge[2]['weight']))
+        temp_weight.sort()
+        weight_list.append(temp_weight)
+
+        G = remove_edge_weights_less_than(G,weight_limit)
+        G = G.subgraph(max(nx.connected_components(G))).copy()
+
+        degree_sequence = sorted([d for n, d in G.degree()], reverse=True)
+        degree_sequence.sort()
+        degree_list.append(degree_sequence)
+
+        community_list.append(community_size_ratio(G,False))
+
+        temp_eccentricity = []
+        for node in G:
+            temp_eccentricity.append(nx.eccentricity(G,node))
+        temp_eccentricity.sort()
+        eccentricity_list.append(temp_eccentricity)
+
+        temp_clustering = []
+        for node in G:
+            temp_clustering.append((nx.clustering(G, node, "weight")))
+        temp_clustering.sort()
+        clustering_list.append(temp_clustering)
+
+    worksheet = workbook.add_worksheet('sim_community')
+    for i in range(len(community_list)):
+        worksheet.write_row(i,0,community_list[i])
+    worksheet = workbook.add_worksheet('sim_degree')
+    for i in range(len(degree_list)):
+        worksheet.write_row(i,0,degree_list[i])
+    worksheet = workbook.add_worksheet('sim_eccentricity')
+    for i in range(len(eccentricity_list)):
+        worksheet.write_row(i,0,eccentricity_list[i])
+    worksheet = workbook.add_worksheet('sim_clustering')
+    for i in range(len(clustering_list)):
+        worksheet.write_row(i,0,clustering_list[i])
+    worksheet = workbook.add_worksheet('sim_weight')
+    for i in range(len(weight_list)):
+        worksheet.write_row(i,0,weight_list[i])
+
+def real_statistics(weight_limit,workbook):
+
+    community_list = []
+    degree_list = []
+    eccentricity_list = []
+    clustering_list = []
+    weight_list = []
+
+    G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day1.graphml")
+
+
+    temp_weight =[]
+    for edge in list(G.edges.data()):
+        temp_weight.append(int(edge[2]['weight']))
+    temp_weight.sort()
+    weight_list.append(temp_weight)
+
+    G = remove_edge_weights_less_than(G,weight_limit)
+    G = G.subgraph(max(nx.connected_components(G))).copy()
+
+    degree_sequence = sorted([d for n, d in G.degree()], reverse=True)
+    degree_sequence.sort()
+    degree_list.append(degree_sequence)
+
+    community_list.append(community_size_ratio(G, False))
+
+    temp_eccentricity = []
+    for node in G:
+        temp_eccentricity.append(nx.eccentricity(G,node))
+    temp_eccentricity.sort()
+    eccentricity_list.append(temp_eccentricity)
+
+    temp_clustering = []
+    for node in G:
+        temp_clustering.append((nx.clustering(G, node, "weight")))
+    temp_clustering.sort()
+    clustering_list.append(temp_clustering)
+
+    worksheet = workbook.add_worksheet('real_community')
+    for i in range(len(community_list)):
+        worksheet.write_row(i,0,community_list[i])
+    worksheet = workbook.add_worksheet('real_degree')
+    for i in range(len(degree_list)):
+        worksheet.write_row(i,0,degree_list[i])
+    worksheet = workbook.add_worksheet('real_eccentricity')
+    for i in range(len(eccentricity_list)):
+        worksheet.write_row(i,0,eccentricity_list[i])
+    worksheet = workbook.add_worksheet('real_clustering')
+    for i in range(len(clustering_list)):
+        worksheet.write_row(i,0,clustering_list[i])
+    worksheet = workbook.add_worksheet('real_weight')
+    for i in range(len(weight_list)):
+        worksheet.write_row(i,0,weight_list[i])
+
+def random_statistics(weight_limit,number_of_graphs,workbook):
+
+    community_list = []
+    degree_list = []
+    eccentricity_list = []
+    clustering_list = []
+    weight_list = []
+
+    G_original = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day1.graphml")
+    for i in range(1,number_of_graphs+1):
+        G = create_random_graph_based_off(G_original)
+
+        temp_weight =[]
+        for edge in list(G.edges.data()):
+            temp_weight.append(int(edge[2]['weight']))
+        temp_weight.sort()
+        weight_list.append(temp_weight)
+
+        G = remove_edge_weights_less_than(G,weight_limit)
+        G = G.subgraph(max(nx.connected_components(G))).copy()
+
+        community_list.append(community_size_ratio(G, False))
+
+        degree_sequence = sorted([d for n, d in G.degree()], reverse=True)
+        degree_sequence.sort()
+        degree_list.append(degree_sequence)
+
+        temp_eccentricity = []
+        for node in G:
+            temp_eccentricity.append(nx.eccentricity(G,node))
+        temp_eccentricity.sort()
+        eccentricity_list.append(temp_eccentricity)
+
+        temp_clustering = []
+        for node in G:
+            temp_clustering.append((nx.clustering(G, node, "weight")))
+        temp_clustering.sort()
+        clustering_list.append(temp_clustering)
+
+    worksheet = workbook.add_worksheet('rand_community')
+    for i in range(len(community_list)):
+        worksheet.write_row(i,0,community_list[i])
+    worksheet = workbook.add_worksheet('rand_degree')
+    for i in range(len(degree_list)):
+        worksheet.write_row(i,0,degree_list[i])
+    worksheet = workbook.add_worksheet('rand_eccentricity')
+    for i in range(len(eccentricity_list)):
+        worksheet.write_row(i,0,eccentricity_list[i])
+    worksheet = workbook.add_worksheet('rand_clustering')
+    for i in range(len(clustering_list)):
+        worksheet.write_row(i,0,clustering_list[i])
+    worksheet = workbook.add_worksheet('rand_weight')
+    for i in range(len(weight_list)):
+        worksheet.write_row(i,0,weight_list[i])
+
+
 
 if __name__ == "__main__":
-    indivualGraphs(15,"C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col")
+    workbook = xlsxwriter.Workbook("statistics_" + str(datetime.datetime.now())[11:19].replace(":","_")+"_"+str(datetime.datetime.now())[:10].replace("-","_")+'.xlsx',{'constant_memory': True})
+    sim_statistics(15,workbook)
+    real_statistics(15,workbook)
+    random_statistics(15,1000,workbook)
+    workbook.close()
+
+"""
+#indivualGraphs(15,"C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col")
+for i in range(1,21):
+    file = open("C:/Users/Desktop/FIT2082/FIT2082-Project14/saves/Saves_edgelist/" + str(i) + "edge_list.txt", "rb")
+    G = nx.read_edgelist(file)
+    G = remove_edge_weights_less_than(G,15)
+    G = G.subgraph(max(nx.connected_components(G))).copy()
+    file.close()
+    showGraph(G)
+"""
 
 
