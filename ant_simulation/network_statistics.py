@@ -7,8 +7,7 @@ import datetime
 
 def create_random_graph_based_off(G):
     #create a random graph with same number of nodes and edges
-    F = nx.generators.random_graphs.gnm_random_graph(G.number_of_nodes(),G.number_of_edges())
-
+    F = nx.complete_graph(G.number_of_nodes())
     #work out total weight of edges in base graph
     total_weight = 0
     for edge in list(G.edges.data()):
@@ -22,7 +21,7 @@ def create_random_graph_based_off(G):
     edge_list = random.choices(list(F.edges.data()),k=total_weight-F.number_of_edges())
     for edge in edge_list:
         edge[2]['weight'] +=1
-
+    #print(F.edges.data())
     return F
 
 
@@ -31,7 +30,7 @@ def remove_edge_weights_less_than(G, amount:int = 0):
     for edge in list(G.edges.data()):
         if int(edge[2]['weight']) < amount:
             G.remove_edge(*edge[:2])
-    G.remove_nodes_from(list(nx.isolates(G)))
+    #G.remove_nodes_from(list(nx.isolates(G)))
     return G
 
 def community_size_networkx(input_file: str, amount_of_community:int = 3):
@@ -58,8 +57,9 @@ def community_size_ratio_real_world():
     return MainList
 
 def community_size_ratio(G,display:bool = True,number_of_communities = 3):
-
-    if G.number_of_nodes == 1:
+    if nx.number_of_nodes(G) == 0:
+        return([0,0,0])
+    if nx.number_of_nodes(G) == 1:
         return([100,0,0])
     if nx.number_of_nodes(G) == 2:
         number_of_communities = 2
@@ -155,7 +155,7 @@ def indivualGraphs(edge_weight_minimum,real_world_dir):
     total_weight = 0
     for edge in list(F.edges.data()):
         total_weight += int(edge[2]['weight'])
-    print(total_weight)
+    #print(total_weight)
 
     Fc = F.subgraph(max(nx.connected_components(F))).copy()
     remove_edge_weights_less_than(Fc, edge_weight_minimum)
@@ -351,11 +351,12 @@ def sim_statistics(weight_limit,workbook):
         weight_list.append(temp_weight)
 
         G = remove_edge_weights_less_than(G,weight_limit)
-        G = G.subgraph(max(nx.connected_components(G))).copy()
 
         degree_sequence = sorted([d for n, d in G.degree()], reverse=True)
         degree_sequence.sort()
         degree_list.append(degree_sequence)
+
+        G = G.subgraph(max(nx.connected_components(G))).copy()
 
         community_list.append(community_size_ratio(G,False))
 
@@ -405,11 +406,12 @@ def real_statistics(weight_limit,workbook):
     weight_list.append(temp_weight)
 
     G = remove_edge_weights_less_than(G,weight_limit)
-    G = G.subgraph(max(nx.connected_components(G))).copy()
 
     degree_sequence = sorted([d for n, d in G.degree()], reverse=True)
     degree_sequence.sort()
     degree_list.append(degree_sequence)
+
+    G = G.subgraph(max(nx.connected_components(G))).copy()
 
     community_list.append(community_size_ratio(G, False))
 
@@ -452,7 +454,6 @@ def random_statistics(weight_limit,number_of_graphs,workbook):
     G_original = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day1.graphml")
     for i in range(1,number_of_graphs+1):
         G = create_random_graph_based_off(G_original)
-
         temp_weight =[]
         for edge in list(G.edges.data()):
             temp_weight.append(int(edge[2]['weight']))
@@ -460,13 +461,14 @@ def random_statistics(weight_limit,number_of_graphs,workbook):
         weight_list.append(temp_weight)
 
         G = remove_edge_weights_less_than(G,weight_limit)
-        G = G.subgraph(max(nx.connected_components(G))).copy()
-
-        community_list.append(community_size_ratio(G, False))
 
         degree_sequence = sorted([d for n, d in G.degree()], reverse=True)
         degree_sequence.sort()
         degree_list.append(degree_sequence)
+
+        G = G.subgraph(max(nx.connected_components(G))).copy()
+
+        community_list.append(community_size_ratio(G, False))
 
         temp_eccentricity = []
         for node in G:
