@@ -12,19 +12,23 @@ def create_random_graph_based_off(G):
     total_weight = 0
     for edge in list(G.edges.data()):
         total_weight += int(edge[2]['weight'])
-    #assign each edge with a weight of 1
+    #assign each edge with a weight of 0
     for edge in list(F.edges.data()):
-        edge[2]['weight'] = 1
+        edge[2]['weight'] = 0
 
     #generate a list of edges of a length total_weight with replacment from F.edges, then add a weight to each sample
     #print(list(F.edges.data()))
-    edge_list = random.choices(list(F.edges.data()),k=total_weight-F.number_of_edges())
+    edge_list = random.choices(list(F.edges.data()),k=total_weight)
     for edge in edge_list:
         edge[2]['weight'] +=1
     #print(F.edges.data())
+
+    for edge in list(F.edges.data()):
+        if edge[2]['weight'] == 0:
+            F.remove_edge(edge[0],edge[1])
+    
+
     return F
-
-
 
 def remove_edge_weights_less_than(G, amount:int = 0):
     for edge in list(G.edges.data()):
@@ -294,20 +298,20 @@ def lots_of_graphs(edge_weight_minimum,real_world_dir):
 
 def weight_distrubution(weight_list):
     weight_list.sort()
-
+    plt.ylim(0,80)
     plt.scatter(range(1,len(weight_list)+1), weight_list, color="b")
     plt.axhline(y=15, color='r', linestyle='-')
-    plt.title("Weight Distrubtion of Network")
+    plt.axhline(y=11, color='orange', linestyle='-')
+    #plt.title("Interaction Distribution of Real Network")
     plt.xlabel("edge")
     plt.ylabel("Interaction amount")
     plt.show()
-
 
 def visualisng_weights():
     # random
     G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day1.graphml")
     weight_list = []
-    for i in range(100):
+    for i in range(1):
         F = create_random_graph_based_off(G)
         for edge in list(F.edges.data()):
             weight_list.append(int(edge[2]['weight']))
@@ -322,7 +326,7 @@ def visualisng_weights():
 
     # simulated
     weight_list = []
-    for i in range(1, 21):
+    for i in range(1, 2):
         file = open("C:/Users/Desktop/FIT2082/FIT2082-Project14/saves/Saves_edgelist/" + str(i) + "edge_list.txt", "rb")
         G = nx.read_edgelist(file)
         file.close()
@@ -397,7 +401,6 @@ def real_statistics(weight_limit,workbook):
     weight_list = []
 
     G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day1.graphml")
-
 
     temp_weight =[]
     for edge in list(G.edges.data()):
@@ -498,13 +501,70 @@ def random_statistics(weight_limit,number_of_graphs,workbook):
     for i in range(len(weight_list)):
         worksheet.write_row(i,0,weight_list[i])
 
+def showGraphCommunities(G):
 
+    temp = list(nx.algorithms.community.asyn_fluid.asyn_fluidc(G,min(3,G.number_of_nodes())))
+
+    temp.sort(key=len, reverse=True)
+
+    pos = nx.fruchterman_reingold_layout(G)
+
+    weights = []
+    temp_list = []
+    if G.number_of_edges() > 0:
+        temp_list = []
+        edges, weights = zip(*nx.get_edge_attributes(G, 'weight').items())
+        for i in range(len(weights)):
+            temp_list.append(weights[i] ** 0.05)  # **0.5
+
+    # write pajek file
+    nx.write_pajek(G, "test.net")
+
+    # show network to user
+
+    nx.draw(G, pos=pos, node_size=50, edge_color=weights, edge_cmap=plt.cm.hot, width=temp_list, alpha=0.8, with_labels=False)
+
+    if len(temp) == 3:
+        nx.draw_networkx_nodes(G, pos, nodelist=temp[0], node_color='b', node_size=50)
+        nx.draw_networkx_nodes(G, pos, nodelist=temp[1], node_color='orange', node_size=50)
+        nx.draw_networkx_nodes(G, pos, nodelist=temp[2], node_color='g', node_size=50)
+
+    elif len(temp) == 2:
+        nx.draw_networkx_nodes(G, pos, nodelist=temp[0], node_color='b', node_size=50)
+        nx.draw_networkx_nodes(G, pos, nodelist=temp[1], node_color='orange', node_size=50)
+    else:
+        nx.draw_networkx_nodes(G, pos, nodelist=temp[0], node_color='b', node_size=50)
+
+    plt.show()
 
 if __name__ == "__main__":
+    #visualisng_weights()
+
+
+    G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day1.graphml")
+    G = create_random_graph_based_off(G)
+    remove_edge_weights_less_than(G,15)
+    G = G.subgraph(max(nx.connected_components(G))).copy()
+    showGraphCommunities(G)
+
+    G = nx.read_graphml("C:/Users/Desktop/FIT2082/6ant/Ant_Keller/weighted_network_col5_day1.graphml")
+    remove_edge_weights_less_than(G,15)
+    G = G.subgraph(max(nx.connected_components(G))).copy()
+    showGraphCommunities(G)
+
+    for i in range(1,21):
+        file = open("C:/Users/Desktop/FIT2082/FIT2082-Project14/saves/Saves_edgelist/" + str(i) + "edge_list.txt", "rb")
+        G = nx.read_edgelist(file)
+        remove_edge_weights_less_than(G,15)
+        G = G.subgraph(max(nx.connected_components(G))).copy()
+        showGraphCommunities(G)
+
+    INTERACTION_LIMIT = 11
+    RANDOM_SAMPLES = 1000
     workbook = xlsxwriter.Workbook("statistics_" + str(datetime.datetime.now())[11:19].replace(":","_")+"_"+str(datetime.datetime.now())[:10].replace("-","_")+'.xlsx',{'constant_memory': True})
-    sim_statistics(15,workbook)
-    real_statistics(15,workbook)
-    random_statistics(15,1000,workbook)
+    sim_statistics(INTERACTION_LIMIT,workbook)
+    real_statistics(INTERACTION_LIMIT,workbook)
+    random_statistics(INTERACTION_LIMIT,RANDOM_SAMPLES,workbook)
     workbook.close()
 
 """
