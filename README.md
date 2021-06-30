@@ -47,4 +47,4 @@ a simple system which governs the behaviour of the agents/"ants" in the simulati
 
 Mersch, D., Crespi, A., Keller, L. (2013). _Tracking Individuals Shows Spatial Fidelity Is a KeyRegulator of
 Ant Social Organization_. Science, 340(6136), 1090-1093.
-<www.jstor.org/stable/41985413>
+www.jstor.org/stable/41985413
