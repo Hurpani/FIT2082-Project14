@@ -1,7 +1,7 @@
 # Application of Network Metrics for Simulation Validation - Camponotus fellah ant social networks case study
 ## Originally FIT2082-Project14 in semester 2 of 2020.
 
-##Summary
+## Summary
 In this study, we sought to examine the application of network metrics for simulation validation.
 Using the example of ant social networks, and the study by Mersch et al. (2013) for our real-world
 data, we designed a simple simulation of ant behaviours using some basic assumptions age polyethism.
@@ -19,7 +19,7 @@ selection of these functions is intended to follow the rough age castes as obser
 in the experiment due to Mersch et al. (2013), so as to implement the hypothesis that an ant's age
 influences its tendencies towards (physical) locations, and through this, its role in the colony.
 
-##Technical Details: Bias Factors
+## Technical Details: Bias Factors
 * * * * *
 At each tick, there is 20 per cent chance that an ant will remain still. Otherwise, it picks one of
 eight adjacent tiles (via the eight cardinal/intercardinal directions) at random, with each choice
