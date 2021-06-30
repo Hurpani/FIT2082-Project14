@@ -44,7 +44,9 @@ contain food, and as they grow older, will have the weighting of pheromone-free 
 ants also leave behind "foraging" pheromones, and will seek these ones out. Altogether, these rules form
 a simple system which governs the behaviour of the agents/"ants" in the simulation model.
 
-**References**
+* * * * *
+
+## References
 
 Mersch, D., Crespi, A., Keller, L. (2013). _Tracking Individuals Shows Spatial Fidelity Is a KeyRegulator of
 Ant Social Organization_. Science, 340(6136), 1090-1093.
