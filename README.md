@@ -19,8 +19,9 @@ selection of these functions is intended to follow the rough age castes as obser
 in the experiment due to Mersch et al. (2013), so as to implement the hypothesis that an ant's age
 influences its tendencies towards (physical) locations, and through this, its role in the colony.
 
-## Technical Details: Bias Factors
 * * * * *
+
+## Technical Details: Bias Factors
 At each tick, there is 20 per cent chance that an ant will remain still. Otherwise, it picks one of
 eight adjacent tiles (via the eight cardinal/intercardinal directions) at random, with each choice
 being weighted and higher weights making such a choice more likely. Initially, all weights are either
