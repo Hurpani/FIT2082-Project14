@@ -44,6 +44,9 @@ contain food, and as they grow older, will have the weighting of pheromone-free 
 ants also leave behind "foraging" pheromones, and will seek these ones out. Altogether, these rules form
 a simple system which governs the behaviour of the agents/"ants" in the simulation model.
 
+The full details can be found here:
+https://github.com/Hurpani/FIT2082-Project14/blob/master/FIT2082_Original_Bias_Factors.pdf.
+
 * * * * *
 
 ## References
