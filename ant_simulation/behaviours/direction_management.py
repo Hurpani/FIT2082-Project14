@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import math
-from typing import Callable, Dict, List
+from typing import Callable, Dict, List, Tuple
 ##############################
 from architecture.exceptions.invalid_location import InvalidLocationException
 
@@ -101,6 +101,11 @@ The Directions class manages pairs of possible movement directions, and associat
             self.directions = Directions.get_baked(world, position)
         else:
             self.directions = Directions.get_weighted_directions(world, position.x, position.y)
+
+
+    def bias_seq(self, *funcs: Callable[[World, Position, Direction, float], float]):
+        for f in funcs:
+            self.bias(f)
 
 
     def bias(self, func: Callable[[World, Position, Direction, float], float]):

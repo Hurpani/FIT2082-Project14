@@ -143,23 +143,20 @@ class WanderPheromoneBehaviour(Behaviour):
                 # Compile list into a list of pairs, where the first entry is a direction, and the second a weight.
             directions: Directions = Directions(world, position)
 
-            # Bias the direction in terms of the previous chosen direction.
-            directions.bias(hold_direction_func(self.hold_chance, self.facing))
+            directions.bias_seq(
+                # Bias the direction in terms of the previous chosen direction.
+                hold_direction_func(self.hold_chance, self.facing),
+                # Bias the direction weights, by pheromone level (with respect to the bias amount).
+                pheromone_bias_func(age_bias(self.pheromone_bias, self.age)),
+                # Bias by brood pheromones, encouraging ants to adopt a nurse role.
+                brood_pheromone_bias_func(self.age),
+                # Bias by forager pheromones, and against other pheromones based on age.
+                exploration_bias_func(self.age),
+                # Bias by food in the foraging area, if the ant is not already carrying food.
+                food_lure_func(self.age) if self.seeking_food else id_func()
+            )
 
-            # Bias the direction weights, by pheromone level (with respect to the bias amount).
-            directions.bias(pheromone_bias_func(age_bias(self.pheromone_bias, self.age)))
-
-            # Bias by brood pheromones, encouraging ants to adopt a nurse role.
-            directions.bias(brood_pheromone_bias_func(self.age))
-
-            # Bias by forager pheromones, and against other pheromones based on age.
-            directions.bias(exploration_bias_func(self.age))
-
-            # Bias by food in the foraging area, if the ant is not already carrying food.
-            if self.seeking_food:
-                directions.bias(food_lure_func(self.age))
-
-            # Make a random, weighted selection of these direction.
+            # Make a random, weighted selection of these directions.
             self.facing = directions.get_random_direction()
 
             # Apply a wobble at random.
