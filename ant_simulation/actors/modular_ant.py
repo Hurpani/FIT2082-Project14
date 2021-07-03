@@ -21,14 +21,14 @@ if TYPE_CHECKING:
 class ModularAnt(Actor):
     COLOUR: Colour = Colour(150, 127, 0)
     AGE_COLOURING_PERIOD: float = 200
-    AGE_SCALE: float = 0.0001 # ages are being input in days, and each tick represents some seconds, so ~1/10000 scale.
+    AGE_SCALE: float = 0.0001   # ages are being input in days, and each tick represents approx. 1s, so ~1/10000 scale.
     ID: str = "mant"
     HOLD_POSITION_CHANCE: float = 0.2
-    PHEROMONES_PER_TICK: int = 8
+    PHEROMONES_PER_TICK: int = 4    # 8
     FORAGING_PHEROMONES_PER_TICK: int = 3
-    FORAGING_AGE: int = 130
+    FORAGING_AGE: int = 120         # 130
     FORAGING_PHEROMONE_OVERRIDE_CHANCE: float = 0.3
-    INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.2, 40, 0.3
+    INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.2, 40, 0.1
     INTERACTION_RADIUS: int = 2
     INTERACTIONS_FILE_NAME: str = "interactions.txt"
     INTERACTING_TICKS_THRESHOLD: int = 3
@@ -126,14 +126,25 @@ class ModularAnt(Actor):
         self.current_wander_behaviour.set_seeking_food(not self.carrying_food)
 
         if random.random() > self.hold_position_chance * (1 + self.interacting_ticks):
+            # Shuffle the list of previous locations.
+            if location != self.prev_location \
+                    and self.prev_location != self.prev_prev_location \
+                    and location != self.prev_prev_location:
+                self.prev_prev_location = self.prev_location
+                self.prev_location = location
+            # end of ^.
             self.current_wander_behaviour.do(world, elapsed, location, position, self)
 
         if self.age < ModularAnt.FORAGING_AGE or random.random() < ModularAnt.\
                 FORAGING_PHEROMONE_OVERRIDE_CHANCE:
-            location.add_pheromones(ModularAnt.PHEROMONES_PER_TICK)
+            if self.prev_prev_location is not None:
+                self.prev_prev_location.add_pheromones(ModularAnt.PHEROMONES_PER_TICK)
+            # location.add_pheromones(ModularAnt.PHEROMONES_PER_TICK)
         else:
             if location.get_brood_pheromone_count() == 0 and location.get_pheromone_count() == 0:
-                location.add_foraging_pheromones(ModularAnt.FORAGING_PHEROMONES_PER_TICK)
+                if self.prev_prev_location is not None:
+                    self.prev_prev_location.add_foraging_pheromones(ModularAnt.FORAGING_PHEROMONES_PER_TICK)
+                # location.add_foraging_pheromones(ModularAnt.FORAGING_PHEROMONES_PER_TICK)
 
         # If this ant is in the foraging area, it will pick up food readily.
         if not self.carrying_food:
@@ -189,6 +200,8 @@ class ModularAnt(Actor):
         self.carrying_food: bool = False
         self.interacting_with_id: int = -1
         self.interacting_ticks: int = 0
+        self.prev_location: Union[None, Location] = None
+        self.prev_prev_location: Union[None, Location] = None
         if attributes is not None:
             # Overwrite (potentially all) attributes with input values.
             attributes.set_for(self)

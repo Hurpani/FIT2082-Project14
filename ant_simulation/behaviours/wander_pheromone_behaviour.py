@@ -53,7 +53,7 @@ def brood_pheromone_bias_func(age: float) -> Callable[[World, Position, Directio
         try:
             loc: Location = world.get_location(position.x + direction.get()[0], position.y + direction.get()[1])
             return weight + (
-                    world.get_testing_scale() *
+                    world.get_pheromone_testing_scale() *
                     (brood_bias(age) * loc.get_pheromone_count() if loc.is_free() and weight != 0 else 0)
             )
         except IndexError:
@@ -67,7 +67,7 @@ def pheromone_bias_func(bias: float) -> Callable[[World, Position, Direction, fl
         try:
             loc: Location = world.get_location(position.x + direction.get()[0], position.y + direction.get()[1])
             return weight + (
-                    world.get_testing_scale() *
+                    world.get_pheromone_testing_scale() *
                     (bias * loc.get_pheromone_count() if loc.is_free() and weight != 0 else 0)
             )
         except IndexError:
@@ -91,7 +91,7 @@ def exploration_bias_func(age: float) -> Callable[[World, Position, Direction, f
         try:
             loc: Location = world.get_location(position.x + direction.get()[0], position.y + direction.get()[1])
             return weight * (
-                    world.get_testing_scale() *
+                    world.get_pheromone_testing_scale() *
                     (
                         (tanh((age - 130) / 10) + 2)
                         if ((loc.get_pheromone_count() <= FORAGING_PHEROMONE_THRESHOLD and
@@ -173,15 +173,12 @@ class WanderPheromoneBehaviour(Behaviour):
             directions.bias_seq(
                 # Bias the direction in terms of the previous chosen direction.
                 hold_direction_func(self.hold_chance, self.facing),
-                # FIXME: THE ANTS ARE BEING ATTRACTED TO THEIR OWN PHEROMONES AND THEN WOBBLING ON THE SPOT (for higher
-                #  testing factors); this means that at best, the effects of these pheromones are negligible, but at
-                #  worst, they actively-inhibit exploration!
                 # Bias the direction weights, by pheromone level (with respect to the bias amount).
-                # pheromone_bias_func(age_bias(self.pheromone_bias, self.age)),
+                pheromone_bias_func(age_bias(self.pheromone_bias, self.age)),
                 # Bias by brood pheromones, encouraging ants to adopt a nurse role.
-                # brood_pheromone_bias_func(self.age),
+                brood_pheromone_bias_func(self.age),
                 # Bias by forager pheromones, and against other pheromones based on age.
-                # exploration_bias_func(self.age),
+                exploration_bias_func(self.age),
                 # Bias by food in the foraging area, if the ant is not already carrying food.
                 food_lure_func(self.age) if self.seeking_food else id_func()
             )
