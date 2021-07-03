@@ -43,6 +43,15 @@ class Direction:
     def reversed(self) -> Direction:
         return Direction(-1 * self.x, -1 * self.y)
 
+    def dot(self, other: Direction) -> float:
+        return (self.x * other.x) + (self.y * other.y)
+
+    @staticmethod
+    def clamped_similarity(d1: Direction, d2: Direction) -> float:
+        dotp: float = d1.dot(d2)
+        return 1 if dotp > 0 else (0.5 if dotp == 0 else 0.01)
+
+    # FIXME: These methods should be replaced and considered deprecated.
     @staticmethod
     def similarity_score(d1: Direction, d2: Direction) -> float:
         OFFSET: float = 1

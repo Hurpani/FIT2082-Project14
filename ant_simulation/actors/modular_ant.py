@@ -28,7 +28,7 @@ class ModularAnt(Actor):
     FORAGING_PHEROMONES_PER_TICK: int = 3
     FORAGING_AGE: int = 130
     FORAGING_PHEROMONE_OVERRIDE_CHANCE: float = 0.3
-    INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.2, 10, 0.3
+    INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.2, 40, 0.3
     INTERACTION_RADIUS: int = 2
     INTERACTIONS_FILE_NAME: str = "interactions.txt"
     INTERACTING_TICKS_THRESHOLD: int = 3

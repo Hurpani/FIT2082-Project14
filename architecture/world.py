@@ -28,7 +28,7 @@ The Map class. Manages a piece of terrain for the simulation.
     WRITE_OUT_OBJECTS_FILE_NAME: str = "world_objects.txt"
     WRITE_OUT_PHEROMONES_FILE_NAME: str = "pheromones_save.txt"
 
-    def __init__(self, width: int, height: int, scale: float = 1.0, delay: float = 1.0):
+    def __init__(self, width: int, height: int, scale: float = 1.0, delay: float = 1.0, bias_test_scale: float = 1.0):
         """\
     Constructor for the world class. Accepts a scale as an argument, which informs locations of
         their real-world dimensions.
@@ -43,6 +43,7 @@ The Map class. Manages a piece of terrain for the simulation.
         self.__height: int = height
         self.__scale: float = scale
         self.__world: [[Location]] = []
+        self.__bias_test_scale: float = bias_test_scale
         for i in range(width):
             self.__world.append([None] * height)
 
@@ -69,6 +70,19 @@ The Map class. Manages a piece of terrain for the simulation.
             self.get_location(x, y).add_object(object)
         else:
             raise InvalidLocationException()
+
+
+    def set_testing_scale(self, scale: float) -> None:
+        self.__bias_test_scale = scale
+
+
+    def get_testing_scale(self) -> float:
+        """\
+    The testing scale of the world indicates how distinct agent decision-making should be from
+        random decision-making. A scale of zero should denote no non-random decision-making,
+        and a scale of 1.0 should correspond to default behaviour.
+        """
+        return self.__bias_test_scale
 
 
     def get_location(self, x: int, y: int) -> Location:

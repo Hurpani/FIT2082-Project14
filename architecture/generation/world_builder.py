@@ -9,11 +9,11 @@ from architecture.world import World
 # TODO : Support "kinds".
 
 
-def __generate_with_grounds(grounds_file: str) -> World:
+def __generate_with_grounds(grounds_file: str, testing_scale: float = 1.0) -> World:
     with open(grounds_file) as file:
         lines: [str] = file.readlines()
         width, height = int(lines[0].split()[0]), int(lines[0].split()[1])
-        world = World(width, height)
+        world = World(width, height, bias_test_scale=testing_scale)
 
         for y in range(height):
             strings = lines[y + 1].split()
@@ -51,7 +51,12 @@ def __populate_with_objects(world: World, objects_file: str) -> World:
     return world
 
 
-def create_world(grounds_file: str, actors_file: str = None, objects_file: str = None) -> World:
-    return __populate_with_objects(__populate_with_actors(
-        __generate_with_grounds(grounds_file), actors_file), objects_file)
+def create_world(grounds_file: str, actors_file: str = None, objects_file: str = None, testing_scale: float = 1.0) -> World:
+    return __populate_with_objects(
+                __populate_with_actors(
+                    __generate_with_grounds(
+                        grounds_file, testing_scale
+                    ), actors_file
+                ), objects_file
+    )
 
