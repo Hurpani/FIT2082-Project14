@@ -70,6 +70,9 @@ def gen_light_network(edge_file: str, density_factor: float = 0.25) -> nx.Graph:
         if ntwrk.get_edge_data(*edge, default=0)['weight'] < min_weight:
             ntwrk.remove_edge(*edge)
 
+    # Remove isolated vertices after the reduction.
+    ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
+
     # Present the edge density:
     print(f"Expected edge density of at most {density_factor}. Actual density is {nx.density(ntwrk)}.")
 
