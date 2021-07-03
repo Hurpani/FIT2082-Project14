@@ -37,7 +37,7 @@ def display_network(ntwrk: nx.Graph, with_communities: Union[infomap.Infomap, No
 def find_communities(ntwrk: nx.Graph) -> Tuple[nx.Graph, infomap.Infomap]:
     # Infomap community-finding algorithm: https://github.com/mapequation/infomap.
     # Requires version 1.4.0 or greater.
-    im: infomap.Infomap = infomap.Infomap()
+    im: infomap.Infomap = infomap.Infomap("--silent")
     im.add_networkx_graph(ntwrk)
     im.run()
     print(f"Discovered {im.num_top_modules} communities.")
@@ -58,6 +58,8 @@ def gen_light_network(edge_file: str, density_factor: float = 0.25) -> nx.Graph:
     if m == 0:
         return ntwrk
 
+    # TODO: This is a difficult problem since it is possible for all edges to be of the same weight, and
+    #  hence make it impossible to reach an edge density of 0.25.
     # Find the floor(0.5 * density_factor * n(n-1))th-order statistic.
     edge_weights: List[int] = sorted(map(lambda t: t[2], ntwrk.edges.data('weight', default=0)))
     k: int = int(0.5 * density_factor * n * (n - 1))
