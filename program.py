@@ -14,11 +14,15 @@ from ant_simulation.analysis import graph_analysis
 if __name__ == "__main__":
     registry.register()
     world: World = create_world("output.txt", "actors.txt", "world_objects.txt", 10.0, 5.0)
-    world.run(10000)
+    world.run(20000)
     Plotter.draw_world(world)
     save(world)
     export_data_to_edge_list_file(ModularAnt.interactions)
-    graph_analysis.display_network(graph_analysis.gen_light_network("edge_list.txt"))
+    graph_analysis.display_network(
+        *graph_analysis.find_communities(
+            graph_analysis.gen_light_network("edge_list.txt", 0.25)
+        )
+    )
 
 
     # for i in range(20):

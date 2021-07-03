@@ -1,16 +1,48 @@
-from typing import Union, List
+from typing import Union, List, Dict, Tuple
 import matplotlib.pyplot as plt
 import networkx as nx
+import infomap
+from matplotlib import colors
 
 
-def display_network(ntwrk: nx.Graph) -> None:
-    nx.draw(ntwrk, nx.fruchterman_reingold_layout(ntwrk))
+def id_corrected_communities(ntwrk: nx.Graph, im: infomap.Infomap) -> Dict["str", int]:
+    """\
+Given the InfoMap algorithm output, and the associated NetworkX network, returns
+    a dictionary which maps a node's id to its associated community.
+    """
+    out_communities: Dict["str", int] = {}
+    nodes: List[str] = list(ntwrk.nodes())
+    communities: Dict[int, int] = im.get_modules()
+    n: int = ntwrk.number_of_nodes()
+    for i in range(n):
+        out_communities[nodes[i]] = communities.get(i) - 1
+    return out_communities
+
+
+def display_network(ntwrk: nx.Graph, with_communities: Union[infomap.Infomap, None] = None) -> nx.Graph:
+    layout = nx.fruchterman_reingold_layout(ntwrk)
+    if with_communities is not None:
+        communities_dict: Dict[str, int] = nx.get_node_attributes(ntwrk, "community")
+        colour_seq: List[str] = [["#2596be", "#A985F0", "#23B030", "#D32A09"][i % 4] for i in communities_dict.values()]
+        nx.draw_networkx_edges(ntwrk, pos=layout)
+        nx.draw_networkx_nodes(ntwrk, pos=layout, node_color=colour_seq).set_edgecolor(
+            colors.hex2color("#00040D")
+        )
+    else:
+        nx.draw(ntwrk, pos=layout)
     plt.show()
+    return ntwrk
 
 
-# def find_communities(ntwrk: nx.Graph) -> None:
-#     # Infomap community-finding algorithm: https://github.com/mapequation/infomap
-#     pass
+def find_communities(ntwrk: nx.Graph) -> Tuple[nx.Graph, infomap.Infomap]:
+    # Infomap community-finding algorithm: https://github.com/mapequation/infomap.
+    # Requires version 1.4.0 or greater.
+    im: infomap.Infomap = infomap.Infomap()
+    im.add_networkx_graph(ntwrk)
+    im.run()
+    print(f"Discovered {im.num_top_modules} communities.")
+    nx.set_node_attributes(ntwrk, id_corrected_communities(ntwrk, im), "community")
+    return ntwrk, im
 
 
 def gen_light_network(edge_file: str, density_factor: float = 0.25) -> nx.Graph:
