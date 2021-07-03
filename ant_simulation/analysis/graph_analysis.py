@@ -49,16 +49,18 @@ def gen_light_network(edge_file: str, density_factor: float = 0.25) -> nx.Graph:
     with open(edge_file) as edge_list:
         ntwrk: Union[None, nx.Graph] = nx.read_edgelist(edge_list)
 
+    # Remove isolated vertices.
+    ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
+
     n: int = ntwrk.number_of_nodes()
     m: int = ntwrk.number_of_edges()
 
     if m == 0:
         return ntwrk
 
-    # Find the floor(density_factor * n(n-1))th-order statistic.
+    # Find the floor(0.5 * density_factor * n(n-1))th-order statistic.
     edge_weights: List[int] = sorted(map(lambda t: t[2], ntwrk.edges.data('weight', default=0)))
-
-    k: int = int(density_factor * n * (n - 1))
+    k: int = int(0.5 * density_factor * n * (n - 1))
     min_weight: int = max(edge_weights) if len(edge_weights) <= k else edge_weights[k]
 
     # Remove edges to satisfy the maximum edge density.
@@ -66,7 +68,7 @@ def gen_light_network(edge_file: str, density_factor: float = 0.25) -> nx.Graph:
         if ntwrk.get_edge_data(*edge, default=0)['weight'] < min_weight:
             ntwrk.remove_edge(*edge)
 
-    # Remove isolated vertices.
-    ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
+    # Present the edge density:
+    print(f"Expected edge density of at most {density_factor}. Actual density is {nx.density(ntwrk)}.")
 
     return ntwrk
