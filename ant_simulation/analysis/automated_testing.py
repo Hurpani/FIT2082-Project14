@@ -56,18 +56,23 @@ The folder argument should specify a folder for the sequence of outputs of
         pth.mkdir()
     n = len(base_seq)
     m = max(1, len(arguments))
+    print("Working...")
     for i in range(n):
         for j in range(m):
+            print(f"\nTesting {base_seq[i][3]} ticks with arguments: {arguments[j]}")
             dsc_pth = pth / desc_file_suffix(i, j)
             ntw_pth = pth / file_suffix(i, j)
             with dsc_pth.open('w') as file:
+                file.write(f"[Base: {base_seq[i]}]\n")
                 for k, v in arguments[j].items():
                     file.write(f"{k}: {v}\n")
             ntwrk = run_test(*base_seq[i], **arguments[j])
             nx.write_graphml(ntwrk, ntw_pth)
+            print(f"Completed test {i}-{j}.")
             # Note that we do not save the worlds, and technically
             # note the interactions either (though they are stored
             # in edge weights within the networks).
+    print("Testing complete!")
 
 
 def run_test(grd: str, act: str, obj: str, run_time: int, **kwargs) -> nx.Graph:

@@ -5,6 +5,11 @@ import infomap
 from matplotlib import colors
 
 
+# Network drawing traits:
+COLOURS: List[str] = ["#2596be", "#A985F0", "#23B030", "#D32A09", "#BAD1DA"]
+OUTLINE: str = "#00040D"
+
+
 class EmptyNetworkException(Exception):
     """\
 This exception is raised when we attempt to process an empty
@@ -45,7 +50,7 @@ Given a community mapping, finds the (count-1)-largest communities, and then
     assoc_pseudoinv: List[Tuple[int, int]] = []
     for i in range(len(pseudoinv)):
         assoc_pseudoinv.append((i, pseudoinv[i]))
-    assoc_pseudoinv = list(map(lambda p: p[0], sorted(assoc_pseudoinv, key=lambda p: p[1])))[:count]
+    assoc_pseudoinv = list(map(lambda p: p[0], sorted(assoc_pseudoinv, key=lambda p: p[1])))[:count - 1]
 
     outmap: Dict[str, int] = {}
     if ntwrk is not None:
@@ -71,20 +76,16 @@ Given the InfoMap algorithm output, and the associated NetworkX network, returns
     return out_communities
 
 
-def display_network(ntwrk: nx.Graph, with_communities: Union[infomap.Infomap, None] = None) -> \
-        Tuple[nx.Graph, Union[infomap.Infomap, None]]:
+def display_network(ntwrk: nx.Graph) -> nx.Graph:
     layout = nx.fruchterman_reingold_layout(ntwrk)
-    if with_communities is not None:
-        communities_dict: Dict[str, int] = nx.get_node_attributes(ntwrk, "community")
-        colour_seq: List[str] = [["#2596be", "#A985F0", "#23B030", "#D32A09"][i % 4] for i in communities_dict.values()]
-        nx.draw_networkx_edges(ntwrk, pos=layout)
-        nx.draw_networkx_nodes(ntwrk, pos=layout, node_color=colour_seq).set_edgecolor(
-            colors.hex2color("#00040D")
-        )
-    else:
-        nx.draw(ntwrk, pos=layout)
+    communities_dict: Dict[str, int] = nx.get_node_attributes(ntwrk, "community")
+    colour_seq: List[str] = [COLOURS[i % len(COLOURS)] for i in communities_dict.values()]
+    nx.draw_networkx_edges(ntwrk, pos=layout)
+    nx.draw_networkx_nodes(ntwrk, pos=layout, node_color=colour_seq).set_edgecolor(
+        colors.hex2color(OUTLINE)
+    )
     plt.show()
-    return ntwrk, with_communities
+    return ntwrk
 
 
 def find_communities(ntwrk: nx.Graph, count: int = -1, verbose: bool = False) -> Tuple[nx.Graph, infomap.Infomap]:
