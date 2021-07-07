@@ -5,7 +5,51 @@ import infomap
 from matplotlib import colors
 
 
-def id_corrected_communities(ntwrk: nx.Graph, im: infomap.Infomap) -> Dict["str", int]:
+def coalesce_communities(comm_map: Dict[str, int], count: int = 3,
+                         ntwrk: Union[None, nx.Graph] = None) -> Dict[str, int]:
+    """\
+Given a community mapping, finds the (count-1)-largest communities, and then
+    groups together the remaining ones to form a count-community mapping.
+
+    If count is non-positive, then no changes are made.
+    """
+    if count <= 0:
+        return comm_map
+
+    # Maps a community to its count.
+    pseudoinv: List[int] = []
+
+    def increment(i: int, lst=pseudoinv) -> None:
+        if i >= len(lst):
+            lst += ([0] * (i - len(lst) + 1))
+        lst[i] += 1
+
+    if ntwrk is not None:
+        # Iterate over the vertices in the network. :)
+        for node in ntwrk.nodes:
+            increment(comm_map[node])
+    else:
+        # Iterate over the dictionary instead. :(
+        for c in comm_map.values():
+            increment(c)
+
+    # Construct a list of the (count-1)-largest communities.
+    assoc_pseudoinv: List[Tuple[int, int]] = []
+    for i in range(len(pseudoinv)):
+        assoc_pseudoinv.append((i, pseudoinv[i]))
+    assoc_pseudoinv = list(map(lambda p: p[0], sorted(assoc_pseudoinv, key=lambda p: p[1])))[:count]
+
+    outmap: Dict[str, int] = {}
+    if ntwrk is not None:
+        for node in ntwrk.nodes:
+            outmap[node] = comm_map[node] if comm_map[node] in assoc_pseudoinv else count
+    else:
+        for k, v in comm_map.values():
+            outmap[k] = v if v in assoc_pseudoinv else count
+    return outmap
+
+
+def id_corrected_communities(ntwrk: nx.Graph, im: infomap.Infomap) -> Dict[str, int]:
     """\
 Given the InfoMap algorithm output, and the associated NetworkX network, returns
     a dictionary which maps a node's id to its associated community.
@@ -34,46 +78,75 @@ def display_network(ntwrk: nx.Graph, with_communities: Union[infomap.Infomap, No
     return ntwrk
 
 
-def find_communities(ntwrk: nx.Graph) -> Tuple[nx.Graph, infomap.Infomap]:
+def find_communities(ntwrk: nx.Graph, count: int = -1) -> Tuple[nx.Graph, infomap.Infomap]:
+    """\
+Applies the Infomap community-finding algorithm. If the specified count is non-positive,
+    then no coalescing of communities occurs; otherwise, only the (count-1)-largest
+    communities remain distinct.
+    """
     # Infomap community-finding algorithm: https://github.com/mapequation/infomap.
     # Requires version 1.4.0 or greater.
     im: infomap.Infomap = infomap.Infomap("--silent")
     im.add_networkx_graph(ntwrk)
     im.run()
     print(f"Discovered {im.num_top_modules} communities.")
-    nx.set_node_attributes(ntwrk, id_corrected_communities(ntwrk, im), "community")
+    nx.set_node_attributes(ntwrk, coalesce_communities(id_corrected_communities(ntwrk, im), count, ntwrk), "community")
     return ntwrk, im
 
 
-def gen_light_network(edge_file: str, density_factor: float = 0.25) -> nx.Graph:
+def read_network(edge_file: str) -> Union[None, nx.Graph]:
     with open(edge_file) as edge_list:
-        ntwrk: Union[None, nx.Graph] = nx.read_edgelist(edge_list)
+        return nx.read_edgelist(edge_list)
 
-    # Remove isolated vertices.
+
+def iterative_gen_light_network(edge_file: str, density_factor: float = 0.25) -> nx.Graph:
+    ntwrk: Union[None, nx.Graph] = read_network(edge_file)
+    if ntwrk is None or nx.number_of_edges(ntwrk) == 0:
+        return nx.empty_graph()
     ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
-
-    n: int = ntwrk.number_of_nodes()
-    m: int = ntwrk.number_of_edges()
-
-    if m == 0:
-        return ntwrk
-
-    # TODO: This is a difficult problem since it is possible for all edges to be of the same weight, and
-    #  hence make it impossible to reach an edge density of 0.25.
-    # Find the floor(0.5 * density_factor * n(n-1))th-order statistic.
-    edge_weights: List[int] = sorted(map(lambda t: t[2], ntwrk.edges.data('weight', default=0)))
-    k: int = int(0.5 * density_factor * n * (n - 1))
-    min_weight: int = max(edge_weights) if len(edge_weights) <= k else edge_weights[k]
-
-    # Remove edges to satisfy the maximum edge density.
-    for edge in ntwrk.edges:
-        if ntwrk.get_edge_data(*edge, default=0)['weight'] < min_weight:
-            ntwrk.remove_edge(*edge)
-
-    # Remove isolated vertices after the reduction.
-    ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
+    edge_list = sorted(ntwrk.edges, key=(lambda uv: ntwrk.get_edge_data(*uv, default=0)['weight']))
+    i: int = 0
+    while nx.density(ntwrk) > density_factor:
+        if i >= len(edge_list):
+            break
+        ntwrk.remove_edge(*edge_list[i])
+        ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
+        i += 1
 
     # Present the edge density:
-    print(f"Expected edge density of at most {density_factor}. Actual density is {nx.density(ntwrk)}.")
+    # print(f"Expected edge density of at most {density_factor}. Actual density is {nx.density(ntwrk)}.")
 
     return ntwrk
+
+
+# def gen_light_network(edge_file: str, density_factor: float = 0.25) -> nx.Graph:
+#     ntwrk: Union[None, nx.Graph] = read_network(edge_file)
+#
+#     # Remove isolated vertices.
+#     ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
+#
+#     n: int = ntwrk.number_of_nodes()
+#     m: int = ntwrk.number_of_edges()
+#
+#     if m == 0:
+#         return ntwrk
+#
+#     # NOTE: This is a difficult problem since it is possible for all edges to be of the same weight, and
+#     #  hence make it impossible to reach an edge density of 0.25.
+#     # Find the floor(0.5 * density_factor * n(n-1))th-order statistic.
+#     edge_weights: List[int] = sorted(map(lambda t: t[2], ntwrk.edges.data('weight', default=0)))
+#     k: int = int(0.5 * density_factor * n * (n - 1))
+#     min_weight: int = max(edge_weights) if len(edge_weights) <= k else edge_weights[k]
+#
+#     # Remove edges to satisfy the maximum edge density.
+#     for edge in ntwrk.edges:
+#         if ntwrk.get_edge_data(*edge, default=0)['weight'] < min_weight:
+#             ntwrk.remove_edge(*edge)
+#
+#     # Remove isolated vertices after the reduction.
+#     ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
+#
+#     # Present the edge density:
+#     # print(f"Expected edge density of at most {density_factor}. Actual density is {nx.density(ntwrk)}.")
+#
+#     return ntwrk
