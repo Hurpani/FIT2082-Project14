@@ -1,7 +1,7 @@
 import math
 import random
 
-from typing import Union, TYPE_CHECKING
+from typing import Union, TYPE_CHECKING, List
 from ant_simulation.behaviours.direction_management import Direction
 from ant_simulation.behaviours.wander_pheromone_behaviour import WanderPheromoneBehaviour
 from ant_simulation.grounds.forage_grounds import ForageGrounds
@@ -49,9 +49,22 @@ class ModularAnt(Actor):
 
 
     @staticmethod
+    def get_interactions() -> List[str]:
+        out_list: List[str] = []
+        for uv, w in ModularAnt.interactions.items():
+            out_list.append(f"{uv[0]} {uv[1]} {'{'}'weight':{ModularAnt.interactions[uv]}{'}'}")
+        return out_list
+
+
+    @staticmethod
     def load_interactions():
         with open((World.WRITE_OUT_FILE_PATH / ModularAnt.INTERACTIONS_FILE_NAME), "r") as file:
             ModularAnt.interactions = eval(file.read())
+
+
+    @staticmethod
+    def wipe_interactions():
+        ModularAnt.interactions = {}
 
 
     @staticmethod

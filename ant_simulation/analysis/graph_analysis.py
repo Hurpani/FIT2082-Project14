@@ -5,7 +5,15 @@ import infomap
 from matplotlib import colors
 
 
-def coalesce_communities(comm_map: Dict[str, int], count: int = 3,
+class EmptyNetworkException(Exception):
+    """\
+This exception is raised when we attempt to process an empty
+    network, where no output is sensible.
+    """
+    pass
+
+
+def coalesce_communities(comm_map: Dict[str, int], count: int,
                          ntwrk: Union[None, nx.Graph] = None) -> Dict[str, int]:
     """\
 Given a community mapping, finds the (count-1)-largest communities, and then
@@ -42,10 +50,10 @@ Given a community mapping, finds the (count-1)-largest communities, and then
     outmap: Dict[str, int] = {}
     if ntwrk is not None:
         for node in ntwrk.nodes:
-            outmap[node] = comm_map[node] if comm_map[node] in assoc_pseudoinv else count
+            outmap[node] = comm_map[node] if comm_map[node] in assoc_pseudoinv else count - 1
     else:
         for k, v in comm_map.values():
-            outmap[k] = v if v in assoc_pseudoinv else count
+            outmap[k] = v if v in assoc_pseudoinv else count - 1
     return outmap
 
 
@@ -63,7 +71,8 @@ Given the InfoMap algorithm output, and the associated NetworkX network, returns
     return out_communities
 
 
-def display_network(ntwrk: nx.Graph, with_communities: Union[infomap.Infomap, None] = None) -> nx.Graph:
+def display_network(ntwrk: nx.Graph, with_communities: Union[infomap.Infomap, None] = None) -> \
+        Tuple[nx.Graph, Union[infomap.Infomap, None]]:
     layout = nx.fruchterman_reingold_layout(ntwrk)
     if with_communities is not None:
         communities_dict: Dict[str, int] = nx.get_node_attributes(ntwrk, "community")
@@ -75,10 +84,10 @@ def display_network(ntwrk: nx.Graph, with_communities: Union[infomap.Infomap, No
     else:
         nx.draw(ntwrk, pos=layout)
     plt.show()
-    return ntwrk
+    return ntwrk, with_communities
 
 
-def find_communities(ntwrk: nx.Graph, count: int = -1) -> Tuple[nx.Graph, infomap.Infomap]:
+def find_communities(ntwrk: nx.Graph, count: int = -1, verbose: bool = False) -> Tuple[nx.Graph, infomap.Infomap]:
     """\
 Applies the Infomap community-finding algorithm. If the specified count is non-positive,
     then no coalescing of communities occurs; otherwise, only the (count-1)-largest
@@ -86,10 +95,13 @@ Applies the Infomap community-finding algorithm. If the specified count is non-p
     """
     # Infomap community-finding algorithm: https://github.com/mapequation/infomap.
     # Requires version 1.4.0 or greater.
+    if ntwrk is None or ntwrk.number_of_nodes() == 0:
+        raise EmptyNetworkException()
     im: infomap.Infomap = infomap.Infomap("--silent")
     im.add_networkx_graph(ntwrk)
     im.run()
-    print(f"Discovered {im.num_top_modules} communities.")
+    if verbose:
+        print(f"Discovered {im.num_top_modules} communities.")
     nx.set_node_attributes(ntwrk, coalesce_communities(id_corrected_communities(ntwrk, im), count, ntwrk), "community")
     return ntwrk, im
 
@@ -99,8 +111,8 @@ def read_network(edge_file: str) -> Union[None, nx.Graph]:
         return nx.read_edgelist(edge_list)
 
 
-def iterative_gen_light_network(edge_file: str, density_factor: float = 0.25) -> nx.Graph:
-    ntwrk: Union[None, nx.Graph] = read_network(edge_file)
+def construct_network(interactions: List[str], density_factor: float = 0.25) -> nx.Graph:
+    ntwrk: Union[None, nx.Graph] = nx.parse_edgelist(interactions)
     if ntwrk is None or nx.number_of_edges(ntwrk) == 0:
         return nx.empty_graph()
     ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
@@ -113,10 +125,24 @@ def iterative_gen_light_network(edge_file: str, density_factor: float = 0.25) ->
         ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
         i += 1
 
-    # Present the edge density:
-    # print(f"Expected edge density of at most {density_factor}. Actual density is {nx.density(ntwrk)}.")
-
     return ntwrk
+
+
+# def iterative_gen_light_network(edge_file: str, density_factor: float = 0.25) -> nx.Graph:
+#     ntwrk: Union[None, nx.Graph] = read_network(edge_file)
+#     if ntwrk is None or nx.number_of_edges(ntwrk) == 0:
+#         return nx.empty_graph()
+#     ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
+#     edge_list = sorted(ntwrk.edges, key=(lambda uv: ntwrk.get_edge_data(*uv, default=0)['weight']))
+#     i: int = 0
+#     while nx.density(ntwrk) > density_factor:
+#         if i >= len(edge_list):
+#             break
+#         ntwrk.remove_edge(*edge_list[i])
+#         ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
+#         i += 1
+#
+#     return ntwrk
 
 
 # def gen_light_network(edge_file: str, density_factor: float = 0.25) -> nx.Graph:
