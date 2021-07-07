@@ -65,6 +65,9 @@ The folder argument should specify a folder for the sequence of outputs of
                     file.write(f"{k}: {v}\n")
             ntwrk = run_test(*base_seq[i], **arguments[j])
             nx.write_graphml(ntwrk, ntw_pth)
+            # Note that we do not save the worlds, and technically
+            # note the interactions either (though they are stored
+            # in edge weights within the networks).
 
 
 def run_test(grd: str, act: str, obj: str, run_time: int, **kwargs) -> nx.Graph:
