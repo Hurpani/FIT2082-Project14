@@ -1,7 +1,7 @@
 import math
 import random
 
-from typing import Union, TYPE_CHECKING, List
+from typing import Union, TYPE_CHECKING, List, Dict
 from ant_simulation.behaviours.direction_management import Direction
 from ant_simulation.behaviours.wander_pheromone_behaviour import WanderPheromoneBehaviour
 from ant_simulation.grounds.forage_grounds import ForageGrounds
@@ -40,6 +40,19 @@ class ModularAnt(Actor):
 
     # Interactions dictionary:
     interactions = {}
+
+    # Age dictionary:
+    initial_age_by_id: Dict[str, float] = {}
+
+
+    @staticmethod
+    def get_initial_age(id: str) -> float:
+        return ModularAnt.initial_age_by_id[id] if id in ModularAnt.initial_age_by_id else 0.0
+
+
+    @staticmethod
+    def get_initial_ages() -> Dict[str, float]:
+        return ModularAnt.initial_age_by_id
 
 
     @staticmethod
@@ -222,6 +235,7 @@ class ModularAnt(Actor):
         # ID-related attributes, forcibly controlled by the ant.
         self.ant_id = (ModularAnt.max_ant_id + 1)
         ModularAnt.max_ant_id += 1
+        ModularAnt.initial_age_by_id[str(self.ant_id)] = self.age
 
         # Create a behaviour for it.
         self.current_wander_behaviour: WanderPheromoneBehaviour = WanderPheromoneBehaviour(self.bias, self.holdness, self.wobble)

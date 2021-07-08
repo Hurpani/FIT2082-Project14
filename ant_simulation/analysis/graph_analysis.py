@@ -8,6 +8,9 @@ from matplotlib import colors
 # Network drawing traits:
 COLOURS: List[str] = ["#2596be", "#A985F0", "#23B030", "#D32A09", "#BAD1DA"]
 OUTLINE: str = "#00040D"
+WEIGHT: str = "weight"
+COMMUNITY: str = "community"
+INITIAL_AGE: str = "age"
 
 
 class EmptyNetworkException(Exception):
@@ -78,7 +81,7 @@ Given the InfoMap algorithm output, and the associated NetworkX network, returns
 
 def display_network(ntwrk: nx.Graph) -> nx.Graph:
     layout = nx.fruchterman_reingold_layout(ntwrk)
-    communities_dict: Dict[str, int] = nx.get_node_attributes(ntwrk, "community")
+    communities_dict: Dict[str, int] = nx.get_node_attributes(ntwrk, COMMUNITY)
     colour_seq: List[str] = [COLOURS[i % len(COLOURS)] for i in communities_dict.values()]
     nx.draw_networkx_edges(ntwrk, pos=layout)
     nx.draw_networkx_nodes(ntwrk, pos=layout, node_color=colour_seq).set_edgecolor(
@@ -103,7 +106,7 @@ Applies the Infomap community-finding algorithm. If the specified count is non-p
     im.run()
     if verbose:
         print(f"Discovered {im.num_top_modules} communities.")
-    nx.set_node_attributes(ntwrk, coalesce_communities(id_corrected_communities(ntwrk, im), count, ntwrk), "community")
+    nx.set_node_attributes(ntwrk, coalesce_communities(id_corrected_communities(ntwrk, im), count, ntwrk), COMMUNITY)
     return ntwrk, im
 
 
@@ -112,12 +115,13 @@ def read_network(edge_file: str) -> Union[None, nx.Graph]:
         return nx.read_edgelist(edge_list)
 
 
-def construct_network(interactions: List[str], density_factor: float = 0.25) -> nx.Graph:
+def construct_network(interactions: List[str], density_factor: float = 0.25,
+                      ages_dict: Dict[str, float] = {}) -> nx.Graph:
     ntwrk: Union[None, nx.Graph] = nx.parse_edgelist(interactions)
     if ntwrk is None or nx.number_of_edges(ntwrk) == 0:
         return nx.empty_graph()
     ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
-    edge_list = sorted(ntwrk.edges, key=(lambda uv: ntwrk.get_edge_data(*uv, default=0)['weight']))
+    edge_list = sorted(ntwrk.edges, key=(lambda uv: ntwrk.get_edge_data(*uv, default=0)[WEIGHT]))
     i: int = 0
     while nx.density(ntwrk) > density_factor:
         if i >= len(edge_list):
@@ -125,6 +129,8 @@ def construct_network(interactions: List[str], density_factor: float = 0.25) -> 
         ntwrk.remove_edge(*edge_list[i])
         ntwrk.remove_nodes_from(list(nx.isolates(ntwrk)))
         i += 1
+
+    nx.set_node_attributes(ntwrk, values=ages_dict, name=INITIAL_AGE)
 
     return ntwrk
 

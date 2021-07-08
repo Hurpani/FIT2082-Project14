@@ -81,7 +81,7 @@ def run_test(grd: str, act: str, obj: str, run_time: int, **kwargs) -> nx.Graph:
     world.run(run_time)
     ntwrk, _ = graph_analysis.find_communities(
         graph_analysis.construct_network(
-            ModularAnt.get_interactions(), NETWORK_DENSITY
+            ModularAnt.get_interactions(), NETWORK_DENSITY, ModularAnt.get_initial_ages()
         ), MAX_COMMUNITIES, False
     )
     return ntwrk
