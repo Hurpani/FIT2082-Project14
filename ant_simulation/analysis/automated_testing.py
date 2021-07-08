@@ -26,18 +26,23 @@ NETWORK_DENSITY: float = 0.25
 MAX_COMMUNITIES: int = 3
 
 
-def file_suffix(k: int, p: int) -> str:
-    return f"{FILE_PREFIX}_{k}-{p}.gml"
+def file_suffix(k: int, p: int, r: int) -> str:
+    return f"{FILE_PREFIX}_{k}-{p}({r}).gml"
 
 
 def desc_file_suffix(k: int, p: int) -> str:
     return f"{DESC_FILE_PREFIX}_{k}-{p}.txt"
 
 
-def batch_test(folder: str, base_seq: List[Tuple[str, str, str, int]], arguments: List[Dict[str, float]]) -> None:
+def batch_test(folder: str, runs: int,
+               base_seq: List[Tuple[str, str, str, int]],
+               arguments: List[Dict[str, float]]) -> None:
     """\
 The folder argument should specify a folder for the sequence of outputs of
     each run to be written in. This will be nested within ./network_outputs/.
+
+    The runs argument determines how many times each particular configuration should
+    be run.
 
     The base_seq argument should be a list of quadruples of ground, actor and object
     files, followed by simulation lengths which you want tested in each combination
@@ -59,19 +64,17 @@ The folder argument should specify a folder for the sequence of outputs of
     print("Working...")
     for i in range(n):
         for j in range(m):
-            print(f"\nTesting {base_seq[i][3]} ticks with arguments: {arguments[j]}")
             dsc_pth = pth / desc_file_suffix(i, j)
-            ntw_pth = pth / file_suffix(i, j)
             with dsc_pth.open('w') as file:
                 file.write(f"[Base: {base_seq[i]}]\n")
                 for k, v in arguments[j].items():
                     file.write(f"{k}: {v}\n")
-            ntwrk = run_test(*base_seq[i], **arguments[j])
-            nx.write_graphml(ntwrk, ntw_pth)
-            print(f"Completed test {i}-{j}.")
-            # Note that we do not save the worlds, and technically
-            # note the interactions either (though they are stored
-            # in edge weights within the networks).
+            for run in range(runs):
+                print(f"\nTesting {base_seq[i][3]} ticks with arguments: {arguments[j]}")
+                ntw_pth = pth / file_suffix(i, j, run + 1)
+                ntwrk = run_test(*base_seq[i], **arguments[j])
+                nx.write_graphml(ntwrk, ntw_pth)
+                print(f"Completed test {i}-{j}, run {run + 1}/{runs}.")
     print("Testing complete!")
 
 
