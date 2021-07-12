@@ -18,7 +18,7 @@ def analyse_in(read_from_path: str, write_to_path: str) -> None:
     ntwrk: nx.Graph
     name: str
     for path in network_paths:
-        name = path.name + SUFFIX
+        name = path.stem + SUFFIX
         ntwrk = nx.read_graphml(path)
         with (Path(write_to_path) / Path(name)).open('w') as file:
             file.write(analysis_of(ntwrk))
