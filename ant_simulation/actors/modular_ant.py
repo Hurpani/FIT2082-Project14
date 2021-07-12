@@ -65,6 +65,12 @@ class ModularAnt(Actor):
             out_list.append(f"{uv[0]} {uv[1]} {'{'}'weight':{ModularAnt.interactions[uv]}{'}'}")
         return out_list
 
+
+    @staticmethod
+    def get_interaction_count() -> int:
+        return sum(ModularAnt.interactions.values())
+
+
     @staticmethod
     def load_interactions():
         with open((World.WRITE_OUT_FILE_PATH / ModularAnt.INTERACTIONS_FILE_NAME), "r") as file:

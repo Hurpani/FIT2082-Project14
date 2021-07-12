@@ -3,8 +3,8 @@ from __future__ import annotations
 ##############################
 from ant_simulation.analysis.automated_testing import batch_test
 from ant_simulation.analysis.analyse import analyse_in
-import networkx as nx
-from ant_simulation.analysis.graph_analysis import display_network
+# import networkx as nx
+# from ant_simulation.analysis.graph_analysis import display_network
 
 
 def perform_testing() -> None:
@@ -25,6 +25,7 @@ if __name__ == "__main__":
     # display_network(nx.read_graphml("./network_outputs/demo_test/network_0-1(2).gml"))
 
     perform_testing()
+    perform_analysis()
 
     print("Hello, World! (todo: request command-line inputs from a user)")
 

@@ -12,6 +12,7 @@ from pathlib import Path
 
 PARENT_DIRECTORY: str = "network_outputs"
 FILE_PREFIX: str = "network"
+INTERACTION_COUNT_FILE_PREFIX: str = "interactions_in_"
 DESC_FILE_PREFIX: str = "arguments"
 # The maximum density of an interaction network; this is a
 # constant, as fixed/specified in the paper by Mersch, et al (2013).
@@ -28,6 +29,10 @@ MAX_COMMUNITIES: int = 3
 
 def file_suffix(k: int, p: int, r: int) -> str:
     return f"{FILE_PREFIX}_{k}-{p}({r}).gml"
+
+
+def interaction_count_file_suffix(k: int, p: int, r: int) -> str:
+    return f"{INTERACTION_COUNT_FILE_PREFIX}{FILE_PREFIX}_{k}-{p}({r}).txt"
 
 
 def desc_file_suffix(k: int, p: int) -> str:
@@ -72,22 +77,25 @@ The folder argument should specify a folder for the sequence of outputs of
             for run in range(runs):
                 print(f"\nTesting {base_seq[i][3]} ticks with arguments: {arguments[j]}")
                 ntw_pth = pth / file_suffix(i, j, run + 1)
-                ntwrk = run_test(*base_seq[i], **arguments[j])
+                ntwrk, count = run_test(*base_seq[i], **arguments[j])
                 nx.write_graphml(ntwrk, ntw_pth)
+                with (pth / interaction_count_file_suffix(i, j, run + 1)).open('w') as file:
+                    file.write(f"Number of interactions was originally: {count}")
                 print(f"Completed test {i}-{j}, run {run + 1}/{runs}.")
     print("Testing complete!")
 
 
-def run_test(grd: str, act: str, obj: str, run_time: int, **kwargs) -> nx.Graph:
+def run_test(grnd: str, act: str, obj: str, run_time: int, **kwargs) -> Tuple[nx.Graph, int]:
     ModularAnt.wipe_interactions()
-    world: World = create_world(grd, act, obj, **kwargs)
+    world: World = create_world(grnd, act, obj, **kwargs)
     world.run(run_time)
+    interaction_count: int = ModularAnt.get_interaction_count()
     ntwrk, _ = graph_analysis.find_communities(
         graph_analysis.construct_network(
             ModularAnt.get_interactions(), NETWORK_DENSITY, ModularAnt.get_initial_ages()
         ), MAX_COMMUNITIES, False
     )
-    return ntwrk
+    return ntwrk, interaction_count
 
 
 
