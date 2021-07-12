@@ -10,11 +10,13 @@ from architecture.world import World
 
 
 def __generate_with_grounds(grounds_file: str, testing_scale: float = 1.0,
-                            pheromone_testing_scale: float = 1.0) -> World:
+                            pheromone_testing_scale: float = 1.0,
+                            interacting_ticks_threshold: int = World.INTERACTING_TICKS_THRESHOLD) -> World:
     with open(grounds_file) as file:
         lines: [str] = file.readlines()
         width, height = int(lines[0].split()[0]), int(lines[0].split()[1])
-        world = World(width, height, bias_test_scale=testing_scale, bias_test_pheromones_scale=pheromone_testing_scale)
+        world = World(width, height, bias_test_scale=testing_scale, bias_test_pheromones_scale=pheromone_testing_scale,
+                      interacting_ticks_threshold=interacting_ticks_threshold)
 
         for y in range(height):
             strings = lines[y + 1].split()
@@ -53,11 +55,11 @@ def __populate_with_objects(world: World, objects_file: str) -> World:
 
 
 def create_world(grounds_file: str, actors_file: str = None, objects_file: str = None, testing_scale: float = 1.0,
-                 pheromone_testing_scale: float = 1.0) -> World:
+                 pheromone_testing_scale: float = 1.0, interacting_ticks_threshold: int = World.INTERACTING_TICKS_THRESHOLD) -> World:
     return __populate_with_objects(
                 __populate_with_actors(
                     __generate_with_grounds(
-                        grounds_file, testing_scale, pheromone_testing_scale
+                        grounds_file, testing_scale, pheromone_testing_scale, interacting_ticks_threshold
                     ), actors_file
                 ), objects_file
     )

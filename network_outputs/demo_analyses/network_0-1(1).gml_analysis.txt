@@ -1,0 +1,8 @@
+***ASSORTATIVITY***
+Overall assortativity: 0.030858328967479316
+
+CommunityData(community_id=15, average_age=39.0, assortativity=-0.6142131979695431)
+
+CommunityData(community_id=14, average_age=56.0, assortativity=0.0)
+
+CommunityData(community_id=2, average_age=94.66901408450704, assortativity=0.01830329418077885)

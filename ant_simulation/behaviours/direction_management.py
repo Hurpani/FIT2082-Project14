@@ -51,6 +51,15 @@ class Direction:
         dotp: float = d1.dot(d2)
         return 1 if dotp > 0 else (0.5 if dotp == 0 else 0.01)
 
+    def __sub__(self, other) -> Direction:
+        return Direction(self.x - other.x, self.y - other.y)
+
+    def size_l1(self) -> float:
+        return abs(self.x) + abs(self.y)
+
+    def size_l2(self) -> float:
+        return math.sqrt((self.x * self.x) + (self.y * self.y))
+
     # FIXME: These methods should be replaced and considered deprecated.
     @staticmethod
     def similarity_score(d1: Direction, d2: Direction) -> float:

@@ -27,9 +27,11 @@ The Map class. Manages a piece of terrain for the simulation.
     WRITE_OUT_ACTORS_FILE_NAME: str = "world_save.txt"
     WRITE_OUT_OBJECTS_FILE_NAME: str = "world_objects.txt"
     WRITE_OUT_PHEROMONES_FILE_NAME: str = "pheromones_save.txt"
+    INTERACTING_TICKS_THRESHOLD: int = 3
 
     def __init__(self, width: int, height: int, scale: float = 1.0, delay: float = 1.0,
-                 bias_test_scale: float = 1.0, bias_test_pheromones_scale: float = 1.0):
+                 bias_test_scale: float = 1.0, bias_test_pheromones_scale: float = 1.0,
+                 interacting_ticks_threshold: int = INTERACTING_TICKS_THRESHOLD):
         """\
     Constructor for the world class. Accepts a scale as an argument, which informs locations of
         their real-world dimensions.
@@ -46,6 +48,8 @@ The Map class. Manages a piece of terrain for the simulation.
         self.__world: [[Location]] = []
         self.__bias_test_scale: float = bias_test_scale
         self.__bias_test_pheromones_scale: float = bias_test_pheromones_scale
+
+        self.interacting_ticks_threshold: int = interacting_ticks_threshold
         for i in range(width):
             self.__world.append([None] * height)
 

@@ -6,7 +6,8 @@ import numpy as np
 SIMRANK_TITLE: str = "***SIMRANK***"
 
 
-def simrank__write_out(ntwrk: nx.Graph) -> str:
+def simrank_write_out(ntwrk: nx.Graph) -> str:
+    # FIXME: NYI - SimRank array is printed hastily via repr, which squishes array.
     return f"{SIMRANK_TITLE}\n{gen_simrank(ntwrk)}"
 
 
