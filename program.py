@@ -9,7 +9,7 @@ from ant_simulation.analysis.analyse import analyse_in
 
 def perform_testing() -> None:
     # Example batch:
-    batch_test("tests", 5, [("output.txt", "actors.txt", "world_objects.txt", 86400)],
+    batch_test("tests", 1, [("output.txt", "actors.txt", "world_objects.txt", 86400)],
                [{"testing_scale": 1.0, "pheromone_testing_scale": 1.0, "interacting_ticks_threshold": 1},
                 {"testing_scale": 1.0, "pheromone_testing_scale": 1.0, "interacting_ticks_threshold": 2},
                 {"testing_scale": 1.0, "pheromone_testing_scale": 1.0, "interacting_ticks_threshold": 3},
