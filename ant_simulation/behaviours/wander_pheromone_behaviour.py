@@ -165,27 +165,27 @@ class WanderPheromoneBehaviour(Behaviour):
         self.wobble_chance = wobble_chance if wobble_chance is not None else self.wobble_chance
 
     def do(self, world: World, elapsed: float, location: Location, position: Position, ant: ModularAnt):
+        # Get a list of ALL possible directions to move in.
+        # Compile list into a list of pairs, where the first entry is a direction, and the second a weight.
+        directions: Directions = Directions(world, position)
+
+        directions.bias_seq(
+            # Bias the direction in terms of the previous chosen direction.
+            hold_direction_func(self.hold_chance, self.facing),
+            # Bias the direction weights, by pheromone level (with respect to the bias amount).
+            pheromone_bias_func(age_bias(self.pheromone_bias, self.age)),
+            # Bias by brood pheromones, encouraging ants to adopt a nurse role.
+            brood_pheromone_bias_func(self.age),
+            # Bias by forager pheromones, and against other pheromones based on age.
+            exploration_bias_func(self.age),
+            # Bias by food in the foraging area, if the ant is not already carrying food.
+            food_lure_func(self.age) if self.seeking_food else id_func()
+        )
+
+        # Make a random, weighted selection of these directions.
+        self.facing = directions.get_random_direction()
+
         try:
-            # Get a list of ALL possible directions to move in.
-            # Compile list into a list of pairs, where the first entry is a direction, and the second a weight.
-            directions: Directions = Directions(world, position)
-
-            directions.bias_seq(
-                # Bias the direction in terms of the previous chosen direction.
-                hold_direction_func(self.hold_chance, self.facing),
-                # Bias the direction weights, by pheromone level (with respect to the bias amount).
-                pheromone_bias_func(age_bias(self.pheromone_bias, self.age)),
-                # Bias by brood pheromones, encouraging ants to adopt a nurse role.
-                brood_pheromone_bias_func(self.age),
-                # Bias by forager pheromones, and against other pheromones based on age.
-                exploration_bias_func(self.age),
-                # Bias by food in the foraging area, if the ant is not already carrying food.
-                food_lure_func(self.age) if self.seeking_food else id_func()
-            )
-
-            # Make a random, weighted selection of these directions.
-            self.facing = directions.get_random_direction()
-
             # Apply a wobble at random.
             d: Direction = self.facing.get_wobble(random.choice(array([0, -1, 1]), p=array([1 - self.wobble_chance,
                                                                                             self.wobble_chance / 2,

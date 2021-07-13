@@ -11,6 +11,9 @@ from architecture.world import World
 from architecture.location import Location
 from architecture.position import Position
 
+
+ZERO_SIMILARITY_VALUE: float = 0.05
+
 ########################################################################################################################
 # These functions and classes are concerned with managing directions.
 ########################################################################################################################
@@ -49,7 +52,7 @@ class Direction:
     @staticmethod
     def clamped_similarity(d1: Direction, d2: Direction) -> float:
         dotp: float = d1.dot(d2)
-        return 1 if dotp > 0 else (0.5 if dotp == 0 else 0.01)
+        return 1 if dotp > 0 else (0.5 if dotp == 0 else ZERO_SIMILARITY_VALUE)
 
     def __sub__(self, other) -> Direction:
         return Direction(self.x - other.x, self.y - other.y)

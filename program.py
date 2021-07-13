@@ -9,16 +9,20 @@ from ant_simulation.analysis.analyse import analyse_in
 
 def perform_testing() -> None:
     # Example batch:
-    batch_test("tests", 1, [("output.txt", "actors.txt", "world_objects.txt", 86400)],
-               [{"testing_scale": 1.0, "pheromone_testing_scale": 1.0, "interacting_ticks_threshold": 1},
+                                                    # 86,400 / 16 (so expecting 60,000 -> 3,750 for 1 tick delay)
+    batch_test("interaction_count_calib_folder", 1, [("output.txt", "actors.txt", "world_objects.txt", 5400)],
+               [
+                # {"testing_scale": 1.0, "pheromone_testing_scale": 1.0, "interacting_ticks_threshold": 1},
                 {"testing_scale": 1.0, "pheromone_testing_scale": 1.0, "interacting_ticks_threshold": 2},
                 {"testing_scale": 1.0, "pheromone_testing_scale": 1.0, "interacting_ticks_threshold": 3},
                 {"testing_scale": 1.0, "pheromone_testing_scale": 1.0, "interacting_ticks_threshold": 4},
-                {"testing_scale": 1.0, "pheromone_testing_scale": 1.0, "interacting_ticks_threshold": 5}])
+                {"testing_scale": 1.0, "pheromone_testing_scale": 1.0, "interacting_ticks_threshold": 5}
+               ])
 
 
 def perform_analysis() -> None:
-    analyse_in("./network_outputs/tests/", "./network_outputs/analyses")
+    analyse_in("./network_outputs/interaction_count_calib_folder/",
+               "./network_outputs/analyses_interaction_count_calib_folder")
 
 
 if __name__ == "__main__":

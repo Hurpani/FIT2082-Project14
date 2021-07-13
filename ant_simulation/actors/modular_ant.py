@@ -32,7 +32,7 @@ class ModularAnt(Actor):
     INITIAL_BIAS_HOLDNESS_WOBBLE: (float, float, float) = 0.2, 40, 0.1
     INTERACTION_RADIUS: int = 2
     INTERACTIONS_FILE_NAME: str = "interactions.txt"
-    INTERACTION_BREAK_DURATION: int = 6
+    INTERACTION_BREAK_DURATION: int = 10
     FOOD_DROP_CHANCE: float = 0.015
     ALT_PICKUP_CHANCE: float = 0.05
 
@@ -90,7 +90,7 @@ class ModularAnt(Actor):
 
     @staticmethod
     def can_interact(a1: "ModularAnt", a2: "ModularAnt") -> bool:
-        SIMILARITY_THRESHOLD: float = 1
+        SIMILARITY_THRESHOLD: float = 0
         return a1.sleep_interactions == a2.sleep_interactions == 0 and (a1.get_facing() - a2.get_facing().reversed()).\
             size_l1() <= SIMILARITY_THRESHOLD
 
