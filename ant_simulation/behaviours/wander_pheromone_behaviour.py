@@ -43,11 +43,11 @@ This is useful for not scaling weightings when the testing scale is zero.
 ########################################################################################################################
 def brood_pheromone_bias_func(age: float) -> Callable[[World, Position, Direction, float], float]:
     def brood_bias(age: float) -> float:
-        # A, B, C, D, E = 3, 1.65, 0.07, -4.8, 2.33  # yields a function which decays quickly around the mean cleaner age.
-        # return (A + B*(age - D)/E)*exp(-C*(age - D)/E)
-        if age < 160:
-            return (3 + 1.65 * (age + 4.8) / 2.33) * exp(-0.07 * (age + 4.8) / 2.33)
-        return 0
+        A, B, C, D, E = 3, 1.65, 0.07, -4.8, 2.33  # yields a function which decays quickly around the mean cleaner age.
+        return (A + B*(age - D)/E)*exp(-C*(age - D)/E)
+        # if age < 160:
+        #     return (3 + 1.65 * (age + 4.8) / 2.33) * exp(-0.07 * (age + 4.8) / 2.33)
+        # return 0
 
     def brood_pheromone_bias(world: World, position: Position, direction: Direction, weight: float) -> float:
         try:

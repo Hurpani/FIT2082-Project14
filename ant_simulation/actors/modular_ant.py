@@ -190,12 +190,12 @@ class ModularAnt(Actor):
         # Measure interactions:
         others: [int] = []
         for loc in world.get_adjacent_locations(position.x, position.y, ModularAnt.INTERACTION_RADIUS, False):
-            if loc.get_actor() is None:
+            ac: Union[Actor , None] = loc.get_actor()
+            if ac is None:
                 continue
-            if isinstance(loc.get_actor(), ModularAnt):
-                other: ModularAnt = loc.get_actor()
-                if ModularAnt.can_interact(self, other):
-                    others.append(other.get_ant_id())
+            if isinstance(ac, ModularAnt):
+                if ModularAnt.can_interact(self, ac):
+                    others.append(ac.get_ant_id())
         if self.interacting_with_id in others:
             self.interacting_ticks += 1
             if self.interacting_ticks > world.interacting_ticks_threshold:

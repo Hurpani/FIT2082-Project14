@@ -1,0 +1,4 @@
+[Base: ('output.txt', 'actors.txt', 'world_objects.txt', 5400)]
+testing_scale: 1.0
+pheromone_testing_scale: 1.0
+interacting_ticks_threshold: 3

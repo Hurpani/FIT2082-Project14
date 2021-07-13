@@ -27,6 +27,9 @@ def perform_analysis() -> None:
 
 if __name__ == "__main__":
     # display_network(nx.read_graphml("./network_outputs/demo_test/network_0-1(2).gml"))
+    # FIXME: Perhaps limit the maximum number of brood pheromones (further?) - the nurses
+    #  are clumping like heck. Also seemed like directly using values of A,B,C,D,E in
+    #  brood bias factor caused issues?
 
     perform_testing()
     perform_analysis()
